@@ -60,7 +60,7 @@ const Dashboard = () => {
 
   return (
     <>
-<div style={{padding:'10px 10px 10px 20px'}}>
+      <div style={{padding:'10px 10px 10px 20px'}}>
       <div className='card-view-container col-12' >
         <div className='card-view-title col-2' style={{ height: '50px', }}>
           <div className='title-one clo-12' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

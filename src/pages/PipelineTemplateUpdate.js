@@ -12,6 +12,7 @@ import makeAnimated from 'react-select/animated';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom'
 
 const CreatePipeline = () => {
 
@@ -19,8 +20,19 @@ const CreatePipeline = () => {
     const [startDate, setStartDate] = useState(null);
     const [dueDate, setDueDate] = useState(null);
     const [autoMoveJob, setAutoMovejob] = useState(false)
-    const [stages, setStages] = useState([]);
+    const [stages, setStages] = useState([]);   
+
+
+
+
+       // Fetch pipeline data and set initial stage visibility
+       
+
+
+
+
     const navigate = useNavigate();
+    const { _id } = useParams();
 
     const handleStartDateChange = (date) => {
         setStartDate(date);
@@ -179,7 +191,11 @@ const CreatePipeline = () => {
     }));
     //all data const 
     const [piplineName, setPipeLineName] = useState("");
-    const [stageName, setStageName] = useState("");
+    const [stageName, setStageName] = useState();
+
+
+
+    console.log(stageName)
 
     //data send 
     const createPipe = () => {
@@ -225,19 +241,62 @@ const CreatePipeline = () => {
     }
 
 
+    //******************************update data get */
+
     const [showForm, setShowForm] = useState(false);
     //get all templateName Record 
     const [pipelineData, setPipelineData] = useState([]);
+    const [Availableto, setAvailableto] = useState([]);
+    const [SortJobsBy, setSortJobsBy] = useState([]);
+    const [defaultjobtemplate, setdefaultjobtemplate] = useState([]);
+    const [stagedata, setstagedata] = useState([]);
+
+    
 
     useEffect(() => {
         const fetchPipelineData = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:8080/workflow/pipeline');
+                const response = await fetch('http://127.0.0.1:8080/workflow/pipeline/pipelinelist/' + _id);
                 if (!response.ok) {
                     throw new Error('Failed to fetch pipeline data');
                 }
                 const data = await response.json();
-                setPipelineData(data.pipeline);
+                setPipelineData(data.pipelineTemplate);
+
+                setstagedata(data.pipelineTemplate.stages);
+                setStages(data.pipelineTemplate.stages);
+                // data.pipelineTemplate.stages.forEach(stage => {
+                //     setstagedata(stage);
+                //     console.log(stage);
+                // });
+
+                if (data.pipelineTemplate && data.pipelineTemplate.availableto) {
+                    const assigneesData = data.pipelineTemplate.availableto.map(assignee => ({
+                      value: assignee._id,
+                      label: assignee.username
+                    }));
+                    setAvailableto(assigneesData);
+                  }
+
+                  if (data.pipelineTemplate && data.pipelineTemplate.sortjobsby) {
+                    const sortjobsbyData = ({
+                      value: data.pipelineTemplate.sortjobsby._id,
+                      label: data.pipelineTemplate.sortjobsby.description
+                    });
+             
+                    setSortJobsBy(sortjobsbyData);
+                  }
+
+                  if (data.pipelineTemplate && data.pipelineTemplate.defaultjobtemplate) {
+                    const defaultjobtemplateData = ({
+                      value: data.pipelineTemplate.defaultjobtemplate._id,
+                      label: data.pipelineTemplate.defaultjobtemplate.templatename
+                    });
+   
+                    setdefaultjobtemplate(defaultjobtemplateData);
+                  }
+
+
             } catch (error) {
                 console.error('Error fetching pipeline data:', error);
             }
@@ -246,64 +305,8 @@ const CreatePipeline = () => {
         fetchPipelineData();
     }, []);
 
-
     console.log(pipelineData)
-
-
-
-    const handleCreateTemplate = () => {
-        setShowForm(true);
-    };
-    const handleEdit = (_id) => {
-        // Implement logic for editing here
-        // console.log("Edit action triggered for template id: ", templateId);
-        navigate('PipelineTemplateUpdate/' + _id)
-    };
-
-    const [openMenuId, setOpenMenuId] = useState(null);
-    const toggleMenu = (_id) => {
-        setOpenMenuId(openMenuId === _id ? null : _id);
-    };
-
-
-    //delete template
-    const handleDelete = (_id) => {
-        const requestOptions = {
-            method: "DELETE",
-            redirect: "follow"
-        };
-
-        fetch("http://127.0.0.1:8080/workflow/pipeline/" + _id, requestOptions)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to delete item');
-                }
-                return response.text();
-            })
-            .then((result) => {
-                console.log(result);
-                toast.success('Item deleted successfully');
-            })
-            .catch((error) => {
-                console.error(error);
-                toast.error('Failed to delete item');
-            })
-            .finally(() => {
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
-            });
-    };
-
-
-
-
-
-
-
-
-
-
+ 
 
     return (
 
@@ -321,7 +324,7 @@ const CreatePipeline = () => {
                             <div className='create-form col-6'>
                                 <div>
                                     <label style={{ fontSize: '14px' }}>Pipeline Name</label>
-                                    <input type='text' value={piplineName} id="pipelineName" onChange={(e) => setPipeLineName(e.target.value)} placeholder='Pipeline Name' className='pipeline-input' />
+                                    <input type='text' value={pipelineData.pipelineName} id="pipelineName" onChange={(e) => setPipeLineName(e.target.value)} placeholder={pipelineData.pipelineName} className='pipeline-input' />
                                 </div>
                                 <div className='select-container'>
                                     <div className='label-container'>
@@ -333,7 +336,7 @@ const CreatePipeline = () => {
                                         options={options}
                                         components={animatedComponents}
                                         isMulti // Enable multi-select
-                                        value={selecteduser}
+                                        value={Availableto}
                                         onChange={handleuserChange}
                                         isSearchable // Enable search     
                                     />
@@ -346,7 +349,7 @@ const CreatePipeline = () => {
                                         className='select-dropdown'
                                         placeholder="Sort jobs by"
                                         options={optionsort}
-                                        value={selectedssortbyjob}
+                                        value={SortJobsBy}
                                         components={animatedComponents}
                                         isMulti={false} // Single selection
                                         isSearchable // Enable search
@@ -366,7 +369,7 @@ const CreatePipeline = () => {
                                         isSearchable // Enable search
                                         isClearable
                                         onChange={handletemp}
-                                        value={selectedtemp}
+                                        value={defaultjobtemplate}
                                     />
                                 </div>
                                 <div className='job-cards-fields col-10'>
@@ -378,7 +381,7 @@ const CreatePipeline = () => {
                                             <div >
                                                 <Switch
                                                     onChange={handleAccount_idChange}
-                                                    checked={Account_id}
+                                                    checked={pipelineData.accountId}
                                                     onColor="#3A91F5"
                                                     onHandleColor="#FFF"
                                                     handleDiameter={20}
@@ -394,7 +397,7 @@ const CreatePipeline = () => {
                                             <div >
                                                 <Switch
                                                     onChange={handlePriorityChange}
-                                                    checked={Priority}
+                                                    checked={pipelineData.priority}
                                                     onColor="#3A91F5"
                                                     onHandleColor="#FFF"
                                                     handleDiameter={20}
@@ -411,7 +414,7 @@ const CreatePipeline = () => {
                                             <div>
                                                 <Switch
                                                     onChange={handleDays_on_stageChange}
-                                                    checked={Days_on_stage}
+                                                    checked={pipelineData.days_on_Stage}
                                                     onColor="#3A91F5"
                                                     onHandleColor="#FFF"
                                                     handleDiameter={20}
@@ -429,7 +432,7 @@ const CreatePipeline = () => {
                                             <div>
                                                 <Switch
                                                     onChange={handleAccount_tagsChange}
-                                                    checked={Account_tags}
+                                                    checked={pipelineData.accounttags}
                                                     onColor="#3A91F5"
                                                     onHandleColor="#FFF"
                                                     handleDiameter={20}
@@ -444,7 +447,7 @@ const CreatePipeline = () => {
                                             <div>
                                                 <Switch
                                                     onChange={handleStartDateChange}
-                                                    checked={startDate}
+                                                    checked={pipelineData.startdate}
                                                     onColor="#3A91F5"
                                                     onHandleColor="#FFF"
                                                     handleDiameter={20}
@@ -461,8 +464,7 @@ const CreatePipeline = () => {
                                             <div>
                                                 <Switch
                                                     onChange={handleNameSwitchChange}
-                                                    checked={Name}
-                                                    onColor="#3A91F5"
+                                                    checked={pipelineData.name}                                                   onColor="#3A91F5"
                                                     onHandleColor="#FFF"
                                                     handleDiameter={20}
                                                     uncheckedIcon={false}
@@ -476,7 +478,7 @@ const CreatePipeline = () => {
                                             <div>
                                                 <Switch
                                                     onChange={handleDue_dateChange}
-                                                    checked={Due_date}
+                                                    checked={pipelineData.dueDate}
                                                     onColor="#3A91F5"
                                                     onHandleColor="#FFF"
                                                     handleDiameter={20}
@@ -494,7 +496,7 @@ const CreatePipeline = () => {
                                             <div>
                                                 <Switch
                                                     onChange={handleDescriptionChange}
-                                                    checked={Description}
+                                                    checked={pipelineData.description}
                                                     onColor="#3A91F5"
                                                     onHandleColor="#FFF"
                                                     handleDiameter={20}
@@ -510,7 +512,7 @@ const CreatePipeline = () => {
                                             <div>
                                                 <Switch
                                                     onChange={handleAssigneesChange}
-                                                    checked={Assignees}
+                                                    checked={pipelineData.assignee}
                                                     onColor="#3A91F5"
                                                     onHandleColor="#FFF"
                                                     handleDiameter={20}
@@ -615,8 +617,9 @@ const CreatePipeline = () => {
 
                         </div>
                         <hr />
+
                         <div className='stages col-12' style={{ display: 'flex', gap: '10px', overflowX: 'auto' }}>
-                            {stages.map((stage, index) => (
+                            {stagedata.map((stage, index) => (
                                 <div key={index} className='stage-board col-3' style={{ height: 'auto', marginTop: '20px', borderRadius: '10px', boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)" }}>
                                     {/* Render stage content */}
                                     <div style={{ margin: '10px' }}>
@@ -624,7 +627,7 @@ const CreatePipeline = () => {
                                             <RxDragHandleDots2 />
                                             <div className="input-icon">
                                                 <LuPenLine className="edit-icon" />
-                                                <input type="text" value={stageName} onChange={(e) => setStageName(e.target.value)} placeholder="Stage Name" style={{ border: 'none', padding: '10px' }} />
+                                                <input type="text" value={stage.name} onChange={(e) => setStageName(e.target.value)} placeholder="Stage Name" style={{ border: 'none', padding: '10px' }} />
                                             </div>
                                             <RiDeleteBin6Line style={{ color: 'red', cursor: 'pointer' }} onClick={() => handleDeleteStage(index)} />
                                         </div>
