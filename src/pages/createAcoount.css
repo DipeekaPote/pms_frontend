@@ -2,12 +2,12 @@
   position: fixed;
   top: 0;
   right: -66.66%;
-
   height: 100%;
   background-color: white;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
   transition: right 0.5s ease-in-out;
+  border: 1px dotte;
 }
 
 .account-open {
@@ -17,10 +17,18 @@
 /* css for header  */
 
 .account-header {
-  display: flex;
+  /* display: flex; */
   padding: 10px;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   background: rgb(243, 243, 243);
+  position: relative;
+}
+
+.header-button {
+  position: absolute;
+  /* top: 60%; */
+  transform: translateY(-40%);
+  right: 0; 
 }
 
 .account-header .account_title {
@@ -50,8 +58,9 @@
   display: flex;
   justify-content: center;
 }
+ 
 
-.sub-account {
+.account-header.sub-account {
   display: flex;
   flex-wrap: wrap;
   padding: 10px;
@@ -230,7 +239,16 @@ boby {
   color: rgb(33, 31, 31);
   font-size: 15px;
 }
-.individual .submit-btn {
+
+.label{
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+
+
+
+/* .individual .submit-btn {
   padding: 8px;
   margin-top: 15px;
   border: none;
@@ -238,7 +256,8 @@ boby {
   color: white;
   background: #007bff;
   width: 20%;
-}
+} */
+
 /* //todo client type  */
 .clienttype_container {
   height: auto;
@@ -251,4 +270,23 @@ boby {
   display: flex;
   padding-bottom: 10px;
   padding-top: 10px;
+}
+
+
+/* .phone-input {
+  width: 80%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-left: 35px;
+  position: relative;
+} */
+
+.account-item .remove-button-phone {
+  position: absolute;
+  right: 30px;
+  height: 35px;
+  transform: translateY(-100%);
+  color: red;
+  background: none;
 }

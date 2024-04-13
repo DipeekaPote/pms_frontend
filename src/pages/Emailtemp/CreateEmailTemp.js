@@ -35,7 +35,7 @@ const [openMenuId, setOpenMenuId] = useState(null);
       redirect: "follow"
     };
 
-    fetch("http://127.0.0.1:8080/workflow/emailtemplate/" + _id, requestOptions)
+    fetch("http://127.0.0.1:8080/workflow/emailtemplate/emailtemplateList/" + _id, requestOptions)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to delete item');
@@ -68,7 +68,7 @@ const [openMenuId, setOpenMenuId] = useState(null);
   // Assuming you fetch email templates data from an API
   const fetchEmailTemplates = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8080/workflow/emailtemplate');
+      const response = await fetch('http://127.0.0.1:8080/workflow/emailtemplate/');
       if (!response.ok) {
         throw new Error('Failed to fetch email templates');
       }

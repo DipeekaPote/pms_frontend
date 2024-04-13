@@ -60,9 +60,9 @@ const Dashboard = () => {
 
   return (
     <>
-      <div style={{padding:'10px 10px 10px 20px'}}>
+<div className='dashboard' style={{padding:'10px 10px 10px 20px',height:'90vh',overflowY:'auto'}}>
       <div className='card-view-container col-12' >
-        <div className='card-view-title col-2' style={{ height: '50px', }}>
+        <div className='card-view-title col-2' style={{ height: '50px' }}>
           <div className='title-one clo-12' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <h3 className='insights-title ' style={{ fontSize: '25px' }}>Insights</h3>
             <h6 className='edit-title ' style={{ fontSize: '12px', color: 'blue', flex: '1', marginLeft: '10px' }}>Edit Widgets</h6>
@@ -193,4 +193,4 @@ const Dashboard = () => {
   )
 }
 
-export default Dashboard
+export default Dashboard;

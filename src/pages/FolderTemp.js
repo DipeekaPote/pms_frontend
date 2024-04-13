@@ -321,8 +321,11 @@ const tempallvalue=()=>{
         }
       </div>
       {showForm && (
-        <div className="form-container">
-          <input
+
+     
+          <div >
+          
+            <input
             type="text"
             value={tempName}
             onChange={(e) => setTempName(e.target.value)}

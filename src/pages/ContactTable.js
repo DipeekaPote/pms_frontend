@@ -152,11 +152,11 @@ const AccountsData = () => {
           <tr>
             <th><input type="checkbox"   checked={selectAll}
               onChange={handleCheckboxChange} /> </th> {/* Empty header for checkbox */}
-            <th>NAME</th>
-            <th>EMAIL</th>
-            <th>PHONE NUMBER</th>
-            <th>COMPANY NAME</th>
-            <th>TAGS</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Company Name</th>
+            <th>Tags</th>
             <th> </th>
           </tr>
         </thead>

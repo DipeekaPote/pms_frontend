@@ -259,10 +259,9 @@ const handleFolderClick = (folderName) => {
   return (
     <div className="container">
       <h1>Update Template</h1>
-      {/* <h1>{tempNameNew}<p>{tempvalues}</p></h1> */}
 
 
-      <div className="form-container">
+      <div >
         <input
           type="text" 
            placeholder={tempvalues}

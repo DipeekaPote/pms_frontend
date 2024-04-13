@@ -191,7 +191,7 @@ const AccountsData = () => {
 
 
   return (
-    <div style={{ padding: "20px", position: "relative" }}>
+    <div className="account-data-con" style={{ padding: "20px", position: "relative"}}>
       <div>
         <button style={{ background: "none" }} type="button" className="btn  add-shortcut-button" onClick={toggleDropdown}>
           <RiAddCircleLine className="add-shortcut-icon" /> Filter

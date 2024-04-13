@@ -177,7 +177,6 @@ console.log(combinedValues);
     setTempName('');
   };
 
-
   console.log(combinedValues)
   //data send 
   const updatejobtemp = () => {
@@ -209,9 +208,27 @@ console.log(combinedValues);
     };
 
     fetch("http://127.0.0.1:8080/workflow/jobtemplate/" + _id, requestOptions)
-      .then((response) => response.text())
-      .then((result) => console.log(result))
-      .catch((error) => console.error(error));
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.text();
+    })
+    .then((result) => {
+    
+      // Handle success
+      toast.success("Job Template created successfully");
+           
+        navigate("/job_template");
+          
+
+   
+    })
+    .catch((error) => {
+      // Handle errors
+      console.error(error);
+      toast.error("Failed to create Job Template");
+    })
   }
 
 

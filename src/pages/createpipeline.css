@@ -5,6 +5,8 @@
   }
   .create-pipeline-container {
     margin: 10px;
+    overflow-y: auto;
+    height: 80vh;
   }
   
   .pipeline-heading {

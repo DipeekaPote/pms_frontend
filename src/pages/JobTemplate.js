@@ -184,18 +184,7 @@ const handleDelete = (_id) => {
 
 
 
-  console.log(templatename)
-  console.log(jobname)
-  console.log(combinedValues)
-  console.log(jobDescription)
-  console.log(startsinduration)
-  console.log(dueinduration)
-  console.log(startDate)
-  console.log(dueDate)
-  console.log(absoluteDate)
-  console.log(startsin)
-  console.log(duein)
-  console.log(priority?.value)
+
 
   //data send 
   const createjobtemp = () => {
@@ -228,9 +217,29 @@ const handleDelete = (_id) => {
     };
 
     fetch("http://127.0.0.1:8080/workflow/jobtemplate/", requestOptions)
-      .then((response) => response.text())
-      .then((result) => console.log(result))
-      .catch((error) => console.error(error));
+
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.text();
+    })
+    .then((result) => {
+      // Handle success
+      toast.success("Job Template created successfully");
+      window.location.reload()
+      setShowForm(false);
+      
+      // Additional logic after successful creation if needed
+    })
+    .catch((error) => {
+      // Handle errors
+      console.error(error);
+      toast.error("Failed to create Job Template");
+    })
+      // .then((response) => response.text())
+      // .then((result) => console.log(result))
+      // .catch((error) => console.error(error));
   }
 
 

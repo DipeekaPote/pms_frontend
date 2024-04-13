@@ -52,33 +52,21 @@ const SidebarItems = [
     icon: <TfiLayersAlt />,
     subNavOpen: false,
     subNav: [
-      {
-        title: "Tasks",
-        path: "/marketplace",
-        icon: <BiCaretRight />,
-      },
+    
       {
         title: "Jobs",
         path: "/jobs",
         icon: <BiCaretRight />,
       },
-      {
-        title: "Jobrecurrences",
-        path: "/tags",
-        icon: <BiCaretRight />,
-      },
+      
       {
         title: "Pipelines",
         path: "/pipeline",
         icon: <BiCaretRight />,
       },
+      
       {
-        title: "Calendar",
-        path: "/customfields",
-        icon: <BiCaretRight />,
-      },
-      {
-        title: "Emailsend",
+        title: "Email ",
         path: "/emailsenttemp",
         icon: <BiCaretRight />,
       },

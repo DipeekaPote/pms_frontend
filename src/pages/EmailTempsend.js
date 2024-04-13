@@ -4,6 +4,8 @@ import makeAnimated from 'react-select/animated';
 import { RiAddCircleLine } from 'react-icons/ri';
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { BsQuestionCircle } from 'react-icons/bs';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const EmailTempsend = () => {
   const animatedComponents = makeAnimated();
   const [selectsortcode, setSelectShortcode] = useState("");
@@ -28,7 +30,6 @@ const EmailTempsend = () => {
 
 
   const [shortcuts, setShortcuts] = useState([]);
-
 
 
 
@@ -202,22 +203,13 @@ const EmailTempsend = () => {
 
 
 
-
+  
   const [mode, setMode] = useState('wysiwyg'); // State to track the current mode
 
   const handleModeChange = (newMode) => {
-    setMode(newMode);
-    console.log("Mode:", newMode); // Log the selected mode to the console
+      setMode(newMode);
+      console.log("Mode:", newMode); // Log the selected mode to the console
   };
-
-
-
-
-
-
-
-
-
 
 
   const handleemail = (e) => {
@@ -234,7 +226,7 @@ const EmailTempsend = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8080/admin/accountdetails");
+      const response = await fetch("http://192.168.1.116:8080/admin/accountdetails");
       const data = await response.json();
       setUserData(data.accounts);
     } catch (error) {
@@ -279,7 +271,7 @@ const EmailTempsend = () => {
 
   const fetchDataemail = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8080/workflow/emailtemplate");
+      const response = await fetch("http://192.168.1.116:8080/workflow/emailtemplate");
       const data = await response.json();
       setUserTemp(data.emailTemplate);
     } catch (error) {
@@ -317,7 +309,7 @@ const EmailTempsend = () => {
 
   const fetchDataemaildetails = async (selecttempId) => {
     try {
-      const response = await fetch("http://127.0.0.1:8080/workflow/emailtemplate/" + selecttempId);
+      const response = await fetch("http://192.168.1.116:8080/workflow/emailtemplate/" + selecttempId);
       const data = await response.json();
       setFetchTemplateData(data.emailTemplate);
       dataupdated(data.emailTemplate)
@@ -336,7 +328,6 @@ const EmailTempsend = () => {
 
 
   const [dataGetEmail, setDataGetEmail] = useState("");
-  console.log(dataGetEmail)
   const datasend = () => {
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -348,8 +339,6 @@ const EmailTempsend = () => {
       templatename: templateName,
       emailsubject: inputText,
       emailbody: textareaValue
-
-
     });
 
     const requestOptions = {
@@ -361,15 +350,31 @@ const EmailTempsend = () => {
 
     let responseData; // Define a variable to store the response data
 
-    fetch("http://127.0.0.1:8080/templateMailSend", requestOptions)
+    fetch("http://192.168.1.116:8080/templateMailSend", requestOptions)
       .then((response) => response.text())
       .then((result) => {
         responseData = result; // Store the response data in the variable
-        setDataGetEmail(responseData)// Log the response data to the console
+        setDataGetEmail(responseData)
+        toast.success('Email sent successfully');
+        window.location.reload()// Log the response data to the console
       })
       .catch((error) => console.error(error));
   };
 
+
+  const handleValidation = () => {
+    if (!email) {
+      toast.error('Please enter an email address');
+      return false;
+    }
+    return true;
+  };
+
+  const handleSend = () => {
+    if (handleValidation()) {
+      datasend();
+    }
+  };
 
 
   const [templateName, setTemplateName] = useState("");
@@ -401,9 +406,9 @@ const EmailTempsend = () => {
 
 
   return (
-    <div className='from' style={{ padding: "50px", }}>
+    <div className='from' style={{ padding: "50px" }}>
       <div className="form__row">
-        <div style={{ border: '1px solid red' }} className="form_col form_col_100">
+        <div className="form_col form_col_100">
           <div className="_select_5n3c2_115">
             <label className="_selectLabel_5n3c2_221">Account</label>
             <div className="react-select-container css-b62m3t-container">
@@ -440,291 +445,284 @@ const EmailTempsend = () => {
                   isSearchable
                   onChange={handletempemail}
                 />
+              </div>
+            </div></div></div>
+      </div>
 
-                <div className='inputemail'>
-                  <label>Email</label>
-                  <input placeholder='Enter Email' type='email' onChange={handleemail} />
-                </div>
+      <div className='inputemail'>
+        <label>Email</label>
+        <input placeholder='Enter Email' type='email' onChange={handleemail} />
+      </div>
 
-                <div>
+      <div>
 
-                  {/* Display email template data */}
-                  {fetchtemplatedata && (
+        {/* Display email template data */}
+        {fetchtemplatedata && (
 
-                    <div className="form_col form_col_100">
-                      <label className="_input_1k08l_1">
-                        <span className="_inputLabel_1k08l_46">Template Name</span>
-                        <div className="_field_1k08l_14" >
-                          <input
-                            className="simple-input"
-                            placeholder="Template Name"
-                            type="text"
-                            value={templateName}
-                            onChange={handleInputChange1}
+          <div className="form_col form_col_100">
+            <label className="_input_1k08l_1">
+              <span className="_inputLabel_1k08l_46">Template Name</span>
+              <div className="_field_1k08l_14" >
+                <input
+                  className="simple-input"
+                  placeholder="Template Name"
+                  type="text"
+                  value={templateName}
+                  onChange={handleInputChange1}
 
-                          />
-                        </div>
-                      </label>
+                />
+              </div>
+            </label>
 
-                      <div className="m-t-15 m-b-10">
-                        <h2 className="panel__subtitle d-flex flex-center-align">
-                          Mode
-                          <button style={{ background: "none", border: 'none' }}
-                            type="button"
-                            className="help-block__link"
-                            onClick={toggleHelp}
-                          >
-                            <BsQuestionCircle className={`v2-icon ${isHelpOpen ? 'active' : ''}`} color="#007bff" />
-                          </button>
-                          {/* Render your help content conditionally based on isHelpOpen state */}
-                          {isHelpOpen && (
-                            <div className="help-content">
-                              {/* Your help content goes here */}
-                            </div>
-                          )}
-                        </h2>
-                        <div className="form__row">
-                          <div className="form_col form_col_100 m-t-10">
-                            <label className="radio" data-test="import-shared-radio-component">
-                              <div className="radio__header">
-                                <input
-                                  className="radio__input"
-                                  type="radio"
-                                  data-test="shared-radio-input"
-                                  value="contacts"
-                                  checked={selectedOption === 'contacts'}
-                                  onChange={() => handleOptionChange('contacts')}
-                                />
-                                <div className="radio__border">
-                                  <div className="radio__dot"></div>
-                                </div>
-                                <div className="radio__label" data-test="shared-radio-label">
-                                  Use contact shortcodes
-                                </div>
-                              </div>
-                            </label>
-                          </div>
-                        </div>
-                        <div className="form__row">
-                          <div className="form_col form_col_100 m-t-15">
-                            <label className="radio" data-test="import-shared-radio-component">
-                              <div className="radio__header">
-                                <input
-                                  className="radio__input"
-                                  type="radio"
-                                  data-test="shared-radio-input"
-                                  value="account"
-                                  checked={selectedOption === 'account'}
-                                  onChange={() => handleOptionChange('account')}
-                                />
-                                <div className="radio__border">
-                                  <div className="radio__dot"></div>
-                                </div>
-                                <div className="radio__label" data-test="shared-radio-label">
-                                  Use account shortcodes
-                                </div>
-                              </div>
-                            </label>
-                          </div>
-                        </div>
+            <div className="m-t-15 m-b-10">
+              <h2 className="panel__subtitle d-flex flex-center-align">
+                Mode
+                <button style={{ background: "none", border: 'none' }}
+                  type="button"
+                  className="help-block__link"
+                  onClick={toggleHelp}
+                >
+                  <BsQuestionCircle className={`v2-icon ${isHelpOpen ? 'active' : ''}`} color="#007bff" />
+                </button>
+                {/* Render your help content conditionally based on isHelpOpen state */}
+                {isHelpOpen && (
+                  <div className="help-content">
+                    {/* Your help content goes here */}
+                  </div>
+                )}
+              </h2>
+              <div className="form__row">
+                <div className="form_col form_col_100 m-t-10">
+                  <label className="radio" data-test="import-shared-radio-component">
+                    <div className="radio__header">
+                      <input
+                        className="radio__input"
+                        type="radio"
+                        data-test="shared-radio-input"
+                        value="contacts"
+                        checked={selectedOption === 'contacts'}
+                        onChange={() => handleOptionChange('contacts')}
+                      />
+                      <div className="radio__border">
+                        <div className="radio__dot"></div>
                       </div>
-
-                      <section className="form__section">
-                        <div className="form__row">
-                          <div className="form_col form_col_100">
-                            <label className="_input_1k08l_1">
-                              <span className="_inputLabel_1k08l_46">Email Subject</span>
-                              <div className="_field_1k08l_14" data-test="input-wrapper">
-                                <input
-                                  autoCapitalize="off"
-                                  className="simple-input"
-                                  placeholder="Email Subject"
-                                  type="text"
-                                  value={inputText + selectedShortcut}
-                                  onChange={handleInputChange}
-                                />
-                              </div>
-                            </label>
-                          </div>
-                        </div>
-
-                        <div className="form__row">
-
-                          <button type="button" style={{ background: "none", border: 'none' }} className="btn  add-shortcut-button" onClick={toggleDropdown}>
-                            <RiAddCircleLine className="add-shortcut-icon" /> Add Shortcode
-                          </button>
-                          {showDropdown && (
-                            <div className="dropdown" ref={dropdownRef}>
-                              <div className="search-bar">
-                                <input
-                                  type="text"
-                                  placeholder="Search shortcuts"
-                                  value={searchTerm}
-                                  onChange={handleSearchChange}
-                                />
-                                <button className="close-icon" style={{ fontSize: "20px", marginTop: '4px' }} onClick={toggleDropdown}>
-                                  <IoIosCloseCircleOutline />
-                                </button>
-                              </div>
-                              <ul className="dropdown-list">
-                                {filteredShortcuts.map(shortcut => (
-                                  <div key={shortcut.title}>
-                                    <span
-                                      style={{ fontWeight: shortcut.isBold ? 'bold' : 'normal', cursor: 'pointer' }}
-                                      onClick={() => handleAddShortcut(shortcut.value)}>
-                                      {shortcut.title}
-                                    </span>
-                                  </div>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                        </div>
-
-                      </section>
-
-
-                      <div className="mode-selector">
-                        <label>
-                          <input
-                            type="radio"
-                            value="wysiwyg"
-                            checked={mode === 'wysiwyg'}
-                            onChange={() => handleModeChange('wysiwyg')}
-                          />
-                          WYSIWYG
-                        </label>
-                        <label>
-                          <input
-                            type="radio"
-                            value="html"
-                            checked={mode === 'html'}
-                            onChange={() => handleModeChange('html')}
-                          />
-                          HTML
-                        </label>
+                      <div className="radio__label" data-test="shared-radio-label">
+                        Use contact shortcodes
                       </div>
-                      {mode === 'wysiwyg' && (
-                        <section className="form__section">
-                          <div className="form__row">
-                            <div className="form_col form_col_100">
-                              {/* Apply custom CSS to remove the border */}
-
-
-                              <textarea
-                                className="wysiwyg"
-                                value={textareaValue + selectedShortcuthtml}
-                                id="editor"
-                                name="editor"
-                                placeholder="Body  "
-                                onChange={onTextareaChange}// Log the content of the textarea to the console
-                              ></textarea>
-
-
-                            </div>
-                          </div>
-                          <button type="button" style={{ background: "none", border: 'none' }} className="btn  add-shortcut-button" onClick={toggleDropdownhtml}>
-                            <RiAddCircleLine className="add-shortcut-icon" /> Add Shortcode
-                          </button>
-                          {showDropdownhtml && (
-                            <div className="dropdown" ref={dropdownRef}>
-                              <div className="search-bar">
-                                <input
-                                  type="text"
-                                  placeholder="Search shortcuts"
-                                  value={searchTerm}
-                                  onChange={handleSearchChange}
-                                />
-
-                              </div>
-                              <ul className="dropdown-list">
-                                {filteredShortcuts.map(shortcut => (
-                                  <div key={shortcut.title}>
-                                    <span
-                                      style={{ fontWeight: shortcut.isBold ? 'bold' : 'normal', cursor: 'pointer' }}
-                                      onClick={() => handleAddShortcuthtml(shortcut.value)}>
-                                      {shortcut.title}
-                                    </span>
-                                  </div>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                        </section>
-                      )}
-
-                      {/* HTML Editor */}
-                      {mode === 'html' && (
-                        <section className="form__section">
-                          <div className="form__row">
-                            <div className="form_col form_col_100">
-                              <textarea
-                                className="wysiwyg"
-                                value={textareaValue + selectedShortcuthtml}
-                                id="editor"
-                                name="editor"
-                                placeholder="Body  "
-                                onChange={onTextareaChange}// Log the content of the textarea to the console
-                              ></textarea>
-                            </div>
-                          </div>
-
-                          <button type="button" style={{ background: "none", border: 'none' }} className="btn  add-shortcut-button" onClick={toggleDropdownhtml}>
-                            <RiAddCircleLine className="add-shortcut-icon" /> Add Shortcode
-                          </button>
-                          {showDropdownhtml && (
-                            <div className="dropdown" ref={dropdownRef}>
-                              <div className="search-bar">
-                                <input
-                                  type="text"
-                                  placeholder="Search shortcuts"
-                                  value={searchTerm}
-                                  onChange={handleSearchChange}
-                                />
-                                <button className="close-icon" style={{ fontSize: "20px", marginTop: '4px' }} onClick={toggleDropdown}>
-                                  <IoIosCloseCircleOutline />
-                                </button>
-                              </div>
-                              <ul className="dropdown-list">
-                                {filteredShortcuts.map(shortcut => (
-                                  <div key={shortcut.title}>
-                                    <span
-                                      style={{ fontWeight: shortcut.isBold ? 'bold' : 'normal', cursor: 'pointer' }}
-                                      onClick={() => handleAddShortcuthtml(shortcut.value)}>
-                                      {shortcut.title}
-                                    </span>
-                                  </div>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                        </section>
-                      )}
                     </div>
-
-
-                  )}
-
-
+                  </label>
                 </div>
-
-                <div>
+              </div>
+              <div className="form__row">
+                <div className="form_col form_col_100 m-t-15">
+                  <label className="radio" data-test="import-shared-radio-component">
+                    <div className="radio__header">
+                      <input
+                        className="radio__input"
+                        type="radio"
+                        data-test="shared-radio-input"
+                        value="account"
+                        checked={selectedOption === 'account'}
+                        onChange={() => handleOptionChange('account')}
+                      />
+                      <div className="radio__border">
+                        <div className="radio__dot"></div>
+                      </div>
+                      <div className="radio__label" data-test="shared-radio-label">
+                        Use account shortcodes
+                      </div>
+                    </div>
+                  </label>
                 </div>
               </div>
             </div>
+
+            <section className="form__section">
+              <div className="form__row">
+                <div className="form_col form_col_100">
+                  <label className="_input_1k08l_1">
+                    <span className="_inputLabel_1k08l_46">Email Subject</span>
+                    <div className="_field_1k08l_14" data-test="input-wrapper">
+                      <input
+                        autoCapitalize="off"
+                        className="simple-input"
+                        placeholder="Email Subject"
+                        type="text"
+                        value={inputText + selectedShortcut}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div className="form__row">
+
+                <button type="button" style={{ background: "none", border: 'none' }} className="btn  add-shortcut-button" onClick={toggleDropdown}>
+                  <RiAddCircleLine className="add-shortcut-icon" /> Add Shortcode
+                </button>
+                {showDropdown && (
+                  <div className="dropdown" ref={dropdownRef}>
+                    <div className="search-bar">
+                      <input
+                        type="text"
+                        placeholder="Search shortcuts"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                      />
+                      <button className="close-icon" style={{ fontSize: "20px", marginTop: '4px' }} onClick={toggleDropdown}>
+                        <IoIosCloseCircleOutline />
+                      </button>
+                    </div>
+                    <ul className="dropdown-list">
+                      {filteredShortcuts.map(shortcut => (
+                        <div key={shortcut.title}>
+                          <span
+                            style={{ fontWeight: shortcut.isBold ? 'bold' : 'normal', cursor: 'pointer' }}
+                            onClick={() => handleAddShortcut(shortcut.value)}>
+                            {shortcut.title}
+                          </span>
+                        </div>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+            </section>
+
+            
+            <div className="mode-selector">
+                                <label>
+                                    <input
+                                        type="radio"
+                                        value="wysiwyg"
+                                        checked={mode === 'wysiwyg'}
+                                        onChange={() => handleModeChange('wysiwyg')}
+                                    />
+                                    WYSIWYG
+                                </label>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        value="html"
+                                        checked={mode === 'html'}
+                                        onChange={() => handleModeChange('html')}
+                                    />
+                                    HTML
+                                </label>
+                            </div>
+                            {mode === 'wysiwyg' && (
+                                <section className="form__section">
+                                    <div className="form__row">
+                                        <div className="form_col form_col_100">
+                                            {/* Apply custom CSS to remove the border */}
+
+
+                                            <textarea
+                                                className="wysiwyg"
+                                                value={textareaValue + selectedShortcuthtml}
+                                                id="editor"
+                                                name="editor"
+                                                placeholder="Body  "
+                                                onChange={onTextareaChange}// Log the content of the textarea to the console
+                                            ></textarea>
+
+
+                                        </div>
+                                    </div>
+                                    <button type="button" style={{background:"none",border:'none'}} className="btn  add-shortcut-button" onClick={toggleDropdownhtml}>
+                                        <RiAddCircleLine className="add-shortcut-icon" /> Add Shortcode
+                                    </button>
+                                    {showDropdownhtml && (
+                                        <div className="dropdown" ref={dropdownRef}>
+                                            <div className="search-bar">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search shortcuts"
+                                                    value={searchTerm}
+                                                    onChange={handleSearchChange}
+                                                />
+                                              
+                                            </div>
+                                            <ul className="dropdown-list">
+                                                {filteredShortcuts.map(shortcut => (
+                                                    <div key={shortcut.title}>
+                                                        <span
+                                                            style={{ fontWeight: shortcut.isBold ? 'bold' : 'normal', cursor: 'pointer' }}
+                                                            onClick={() => handleAddShortcuthtml(shortcut.value)}>
+                                                            {shortcut.title}
+                                                        </span>
+                                                    </div>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+                                </section>
+                            )}
+
+                            {/* HTML Editor */}
+                            {mode === 'html' && (
+                                <section className="form__section">
+                                    <div className="form__row">
+                                        <div className="form_col form_col_100">
+                                            <textarea
+                                                className="wysiwyg"
+                                                value={textareaValue + selectedShortcuthtml}
+                                                id="editor"
+                                                name="editor"
+                                                placeholder="Body  "
+                                                onChange={onTextareaChange}// Log the content of the textarea to the console
+                                            ></textarea>
+                                        </div>
+                                    </div>
+
+                                    <button type="button" style={{background:"none",border:'none'}} className="btn  add-shortcut-button" onClick={toggleDropdownhtml}>
+                                        <RiAddCircleLine className="add-shortcut-icon" /> Add Shortcode
+                                    </button>
+                                    {showDropdownhtml && (
+                                        <div className="dropdown" ref={dropdownRef}>
+                                            <div className="search-bar">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search shortcuts"
+                                                    value={searchTerm}
+                                                    onChange={handleSearchChange}
+                                                />
+                                                <button className="close-icon" style={{ fontSize: "20px", marginTop: '4px' }} onClick={toggleDropdown}>
+                                                    <IoIosCloseCircleOutline />
+                                                </button>
+                                            </div>
+                                            <ul className="dropdown-list">
+                                                {filteredShortcuts.map(shortcut => (
+                                                    <div key={shortcut.title}>
+                                                        <span
+                                                            style={{ fontWeight: shortcut.isBold ? 'bold' : 'normal', cursor: 'pointer' }}
+                                                            onClick={() => handleAddShortcuthtml(shortcut.value)}>
+                                                            {shortcut.title}
+                                                        </span>
+                                                    </div>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+                                </section>
+                            )}
           </div>
+    
 
-
-
-
-        </div>
-
-
-
-        <button onClick={datasend}>Send </button>
+        )}
+        
+      
+      </div>
+      
+      <div>
+       
+        <button onClick={handleSend}>Send </button>
 
         <button >Cancel </button>
       </div>
+      <ToastContainer />
     </div>
 
 

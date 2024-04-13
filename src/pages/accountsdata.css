@@ -39,7 +39,10 @@ button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
-
+.account-data-con{
+  overflow-y: auto;
+  height: 80vh;
+}
 
 
 

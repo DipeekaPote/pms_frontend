@@ -20,13 +20,13 @@ const CreatePipeline = () => {
     const [startDate, setStartDate] = useState(null);
     const [dueDate, setDueDate] = useState(null);
     const [autoMoveJob, setAutoMovejob] = useState(false)
-    const [stages, setStages] = useState([]);   
+    const [stages, setStages] = useState([]);
 
 
 
 
-       // Fetch pipeline data and set initial stage visibility
-       
+    // Fetch pipeline data and set initial stage visibility
+
 
 
 
@@ -89,6 +89,7 @@ const CreatePipeline = () => {
         const newStage = { ...lastStage };
         setStages([...stages, newStage]);
     };
+
     useState(() => {
         handleAddStage();
     }, []);
@@ -228,30 +229,42 @@ const CreatePipeline = () => {
         });
 
         const requestOptions = {
-            method: "POST",
+            method: "PATCH",
             headers: myHeaders,
             body: raw,
             redirect: "follow"
         };
 
-        fetch("http://127.0.0.1:8080/workflow/pipeline", requestOptions)
-            .then((response) => response.text())
-            .then((result) => console.log(result))
-            .catch((error) => console.error(error));
+        fetch("http://127.0.0.1:8080/workflow/pipeline/" + _id, requestOptions)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then((result) => {
+                // Display success toast
+                toast.success("Pipeline Updated successfully");
+                console.log(result)
+                navigate("/createpipeline");
+                // Log the result if needed
+                // Additional logic after successful creation if needed
+            })
+            .catch((error) => {
+                // Display error toast
+
+                toast.error("Failed to create pipeline");
+            });
     }
 
 
     //******************************update data get */
 
-    const [showForm, setShowForm] = useState(false);
+
     //get all templateName Record 
     const [pipelineData, setPipelineData] = useState([]);
-    const [Availableto, setAvailableto] = useState([]);
-    const [SortJobsBy, setSortJobsBy] = useState([]);
-    const [defaultjobtemplate, setdefaultjobtemplate] = useState([]);
     const [stagedata, setstagedata] = useState([]);
 
-    
 
     useEffect(() => {
         const fetchPipelineData = async () => {
@@ -263,8 +276,8 @@ const CreatePipeline = () => {
                 const data = await response.json();
                 setPipelineData(data.pipelineTemplate);
 
-                setstagedata(data.pipelineTemplate.stages);
                 setStages(data.pipelineTemplate.stages);
+            
                 // data.pipelineTemplate.stages.forEach(stage => {
                 //     setstagedata(stage);
                 //     console.log(stage);
@@ -272,31 +285,40 @@ const CreatePipeline = () => {
 
                 if (data.pipelineTemplate && data.pipelineTemplate.availableto) {
                     const assigneesData = data.pipelineTemplate.availableto.map(assignee => ({
-                      value: assignee._id,
-                      label: assignee.username
+                        value: assignee._id,
+                        label: assignee.username
                     }));
-                    setAvailableto(assigneesData);
-                  }
+                    setSelectedUser(assigneesData);
+                }
 
-                  if (data.pipelineTemplate && data.pipelineTemplate.sortjobsby) {
+                if (data.pipelineTemplate && data.pipelineTemplate.sortjobsby) {
                     const sortjobsbyData = ({
-                      value: data.pipelineTemplate.sortjobsby._id,
-                      label: data.pipelineTemplate.sortjobsby.description
+                        value: data.pipelineTemplate.sortjobsby._id,
+                        label: data.pipelineTemplate.sortjobsby.description
                     });
-             
-                    setSortJobsBy(sortjobsbyData);
-                  }
 
-                  if (data.pipelineTemplate && data.pipelineTemplate.defaultjobtemplate) {
+                    setselectedsortbyjob(sortjobsbyData);
+                }
+
+                if (data.pipelineTemplate && data.pipelineTemplate.defaultjobtemplate) {
                     const defaultjobtemplateData = ({
-                      value: data.pipelineTemplate.defaultjobtemplate._id,
-                      label: data.pipelineTemplate.defaultjobtemplate.templatename
+                        value: data.pipelineTemplate.defaultjobtemplate._id,
+                        label: data.pipelineTemplate.defaultjobtemplate.templatename
                     });
-   
-                    setdefaultjobtemplate(defaultjobtemplateData);
-                  }
 
+                    setselectedTemp(defaultjobtemplateData);
+                }
+                setPipeLineName(data.pipelineTemplate.pipelineName);
 
+                setAccount_id(data.pipelineTemplate.accountId);
+                setPriority(data.pipelineTemplate.priority);
+                setDays_on_stage(data.pipelineTemplate.days_on_Stage);
+                setAccount_tags(data.pipelineTemplate.accounttags);
+                setName(data.pipelineTemplate.name);
+                setDue_date(data.pipelineTemplate.duedate);
+                setDescription(data.pipelineTemplate.description);
+                setAssignees(data.pipelineTemplate.assignees);
+                setStartDate(data.pipelineTemplate.startdate);
             } catch (error) {
                 console.error('Error fetching pipeline data:', error);
             }
@@ -305,8 +327,8 @@ const CreatePipeline = () => {
         fetchPipelineData();
     }, []);
 
-    console.log(pipelineData)
- 
+
+
 
     return (
 
@@ -317,14 +339,14 @@ const CreatePipeline = () => {
                 <div>
                     <div className='pipelines-form col-10'>
                         <div className='form-header'>
-                            <h3>Create Pipeline</h3>
+                            <h3>Update Pipeline</h3>
                             <hr />
                         </div>
                         <div className='form-area'>
                             <div className='create-form col-6'>
                                 <div>
                                     <label style={{ fontSize: '14px' }}>Pipeline Name</label>
-                                    <input type='text' value={pipelineData.pipelineName} id="pipelineName" onChange={(e) => setPipeLineName(e.target.value)} placeholder={pipelineData.pipelineName} className='pipeline-input' />
+                                    <input type='text' value={piplineName} id="pipelineName" onChange={(e) => setPipeLineName(e.target.value)} placeholder='Pipeline Name' className='pipeline-input' />
                                 </div>
                                 <div className='select-container'>
                                     <div className='label-container'>
@@ -336,7 +358,7 @@ const CreatePipeline = () => {
                                         options={options}
                                         components={animatedComponents}
                                         isMulti // Enable multi-select
-                                        value={Availableto}
+                                        value={selecteduser}
                                         onChange={handleuserChange}
                                         isSearchable // Enable search     
                                     />
@@ -349,7 +371,7 @@ const CreatePipeline = () => {
                                         className='select-dropdown'
                                         placeholder="Sort jobs by"
                                         options={optionsort}
-                                        value={SortJobsBy}
+                                        value={selectedssortbyjob}
                                         components={animatedComponents}
                                         isMulti={false} // Single selection
                                         isSearchable // Enable search
@@ -369,7 +391,7 @@ const CreatePipeline = () => {
                                         isSearchable // Enable search
                                         isClearable
                                         onChange={handletemp}
-                                        value={defaultjobtemplate}
+                                        value={selectedtemp}
                                     />
                                 </div>
                                 <div className='job-cards-fields col-10'>
@@ -381,7 +403,7 @@ const CreatePipeline = () => {
                                             <div >
                                                 <Switch
                                                     onChange={handleAccount_idChange}
-                                                    checked={pipelineData.accountId}
+                                                    checked={Account_id}
                                                     onColor="#3A91F5"
                                                     onHandleColor="#FFF"
                                                     handleDiameter={20}
@@ -397,7 +419,7 @@ const CreatePipeline = () => {
                                             <div >
                                                 <Switch
                                                     onChange={handlePriorityChange}
-                                                    checked={pipelineData.priority}
+                                                    checked={Priority}
                                                     onColor="#3A91F5"
                                                     onHandleColor="#FFF"
                                                     handleDiameter={20}
@@ -414,7 +436,7 @@ const CreatePipeline = () => {
                                             <div>
                                                 <Switch
                                                     onChange={handleDays_on_stageChange}
-                                                    checked={pipelineData.days_on_Stage}
+                                                    checked={Days_on_stage}
                                                     onColor="#3A91F5"
                                                     onHandleColor="#FFF"
                                                     handleDiameter={20}
@@ -432,7 +454,7 @@ const CreatePipeline = () => {
                                             <div>
                                                 <Switch
                                                     onChange={handleAccount_tagsChange}
-                                                    checked={pipelineData.accounttags}
+                                                    checked={Account_tags}
                                                     onColor="#3A91F5"
                                                     onHandleColor="#FFF"
                                                     handleDiameter={20}
@@ -447,7 +469,7 @@ const CreatePipeline = () => {
                                             <div>
                                                 <Switch
                                                     onChange={handleStartDateChange}
-                                                    checked={pipelineData.startdate}
+                                                    checked={startDate}
                                                     onColor="#3A91F5"
                                                     onHandleColor="#FFF"
                                                     handleDiameter={20}
@@ -464,7 +486,7 @@ const CreatePipeline = () => {
                                             <div>
                                                 <Switch
                                                     onChange={handleNameSwitchChange}
-                                                    checked={pipelineData.name}                                                   onColor="#3A91F5"
+                                                    checked={Name} onColor="#3A91F5"
                                                     onHandleColor="#FFF"
                                                     handleDiameter={20}
                                                     uncheckedIcon={false}
@@ -478,7 +500,7 @@ const CreatePipeline = () => {
                                             <div>
                                                 <Switch
                                                     onChange={handleDue_dateChange}
-                                                    checked={pipelineData.dueDate}
+                                                    checked={Due_date}
                                                     onColor="#3A91F5"
                                                     onHandleColor="#FFF"
                                                     handleDiameter={20}
@@ -496,7 +518,7 @@ const CreatePipeline = () => {
                                             <div>
                                                 <Switch
                                                     onChange={handleDescriptionChange}
-                                                    checked={pipelineData.description}
+                                                    checked={Description}
                                                     onColor="#3A91F5"
                                                     onHandleColor="#FFF"
                                                     handleDiameter={20}
@@ -512,7 +534,7 @@ const CreatePipeline = () => {
                                             <div>
                                                 <Switch
                                                     onChange={handleAssigneesChange}
-                                                    checked={pipelineData.assignee}
+                                                    checked={Assignees}
                                                     onColor="#3A91F5"
                                                     onHandleColor="#FFF"
                                                     handleDiameter={20}
@@ -619,7 +641,7 @@ const CreatePipeline = () => {
                         <hr />
 
                         <div className='stages col-12' style={{ display: 'flex', gap: '10px', overflowX: 'auto' }}>
-                            {stagedata.map((stage, index) => (
+                            {stages.map((stage, index) => (
                                 <div key={index} className='stage-board col-3' style={{ height: 'auto', marginTop: '20px', borderRadius: '10px', boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)" }}>
                                     {/* Render stage content */}
                                     <div style={{ margin: '10px' }}>
@@ -627,7 +649,7 @@ const CreatePipeline = () => {
                                             <RxDragHandleDots2 />
                                             <div className="input-icon">
                                                 <LuPenLine className="edit-icon" />
-                                                <input type="text" value={stage.name} onChange={(e) => setStageName(e.target.value)} placeholder="Stage Name" style={{ border: 'none', padding: '10px' }} />
+                                                <input type="text" value={stageName} onChange={(e) => setStageName(e.target.value)} placeholder="Stage Name" style={{ border: 'none', padding: '10px' }} />
                                             </div>
                                             <RiDeleteBin6Line style={{ color: 'red', cursor: 'pointer' }} onClick={() => handleDeleteStage(index)} />
                                         </div>
@@ -677,6 +699,7 @@ const CreatePipeline = () => {
                 </div>
 
             </>
+            <ToastContainer />
         </div >
     );
 

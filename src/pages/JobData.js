@@ -265,13 +265,13 @@ const JobsData = () => {
             <th><input type="checkbox" checked={selectAll}
               onChange={handleCheckboxChange} /></th>
             <th>Name</th>
-            <th>JOB ASSIGNEE</th>
-            <th>PIPELINE</th>
-            <th>STAGE</th>
-            <th>ACCOUNT</th>
-            <th>START DATE</th>
-            <th>DUE DATE</th>
-            <th>TIME IN CURRENT</th>
+            <th>Job Assignee</th>
+            <th>Pipeline</th>
+            <th>Stage</th>
+            <th>Account</th>
+            <th>Start Date</th>
+            <th>Due Date</th>
+            <th>Time In Current</th>
           </tr>
         </thead>
         <tbody>

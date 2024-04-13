@@ -1,18 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect,useCallback  } from 'react';
 import "../../pages/Emailtemp/listdata.css"
 import Select from 'react-select';
 import { RiAddCircleLine } from 'react-icons/ri';
-import { EditorState } from 'draft-js';
-import { Editor } from 'react-draft-wysiwyg';
+
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { BsQuestionCircle } from 'react-icons/bs';
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { toast } from 'react-toastify';
-import {Link ,useNavigate,useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
 import makeAnimated from 'react-select/animated';
-const UpdateEmail = () => {
-
+const Shortcodes = () => {
 
     const { _id } = useParams();
 
@@ -51,86 +49,92 @@ const UpdateEmail = () => {
 
     useEffect(() => {
         if (selectedOption === 'contacts') {
-            // Set contact shortcuts
-            const contactShortcuts = [
-                { title: 'Account Shortcodes', isBold: true },
-                { title: 'Account Name', isBold: false, value: 'Account_Name' },
-                { title: 'Contact Shortcodes', isBold: true, value: 'Contact_Shortcodes' },
-                { title: 'Contact Name', isBold: false, value: 'Contact_Name' },
-                { title: 'First Name', isBold: false, value: 'First_Name' },
-                { title: 'Middle Name', isBold: false, value: 'Middle_Name' },
-                { title: 'Last Name', isBold: false, value: 'Last_Name' },
-                { title: 'Phone number', isBold: false, value: 'Phone_number' },
-                { title: 'Country', isBold: false, value: 'Country' },
-                { title: 'Company name', isBold: false, value: 'Company_name ' },
-                { title: 'Street address', isBold: false, value: 'Street_address' },
-                { title: 'City', isBold: false, value: 'City' },
-                { title: 'State/Province', isBold: false, value: 'State/Province' },
-                { title: 'Zip/Postal code', isBold: false, value: 'Zip/Postal_code' },
-                { title: 'Custom field:Email', isBold: false, value: 'Custom_field:Email' },
-
-                { title: 'Date Shortcodes', isBold: true },
-                { title: 'Current day full date', isBold: false, value: 'Current_day_full_date' },
-                { title: 'Current day number', isBold: false, value: 'Current_day_number' },
-                { title: 'Current day name', isBold: false, value: 'Current_day _name' },
-                { title: 'Current week', isBold: false, value: 'Current_week' },
-                { title: 'Current month name', isBold: false, value: 'Current_month_name' },
-                { title: 'Current quarter', isBold: false, value: 'Current_quarter' },
-                { title: 'Current year', isBold: false, value: 'Current_year' },
-                { title: 'Last day number', isBold: false, value: 'Last_day_number' },
-                { title: 'Last day name', isBold: false, value: 'Last_day_name' },
-                { title: 'Last week', isBold: false, value: 'Last_week' },
-                { title: 'Last month number', isBold: false, value: 'Last_month_number' },
-                { title: 'Last month name', isBold: false, value: 'Last_month_name' },
-                { title: 'Last quarter', isBold: false, value: 'Last_quarter' },
-                { title: 'Last_year', isBold: false, value: 'Phone_number' },
-                { title: 'Next day full date', isBold: false, value: 'Phone_number' },
-                { title: 'Next day number', isBold: false, value: 'Phone_number' },
-                { title: 'Next day name', isBold: false, value: 'Next_day_name' },
-                { title: 'Next week', isBold: false, value: 'Next_week' },
-                { title: 'Next month number', isBold: false, value: 'Next_month_number' },
-                { title: 'Next month name', isBold: false, value: 'Next_month_name' },
-                { title: 'Next quarter', isBold: false, value: 'Next_quarter' },
-                { title: 'Next year', isBold: false, value: 'Next_year' }
-
-
-
-            ];
-            setShortcuts(contactShortcuts);
+          // Set contact shortcuts
+          const contactShortcuts = [
+            { title: 'Account Shortcodes', isBold: true },
+            { title: 'Account Name', isBold: false, value: 'ACCOUNT_NAME' },
+            { title: 'Custom field:Account', isBold: false, value: 'ACCOUNT_CUSTOM_FIELD:Website' },
+            { title: 'Contact Shortcodes', isBold: true, value: 'Contact_Shortcodes' },
+            { title: 'Contact Name', isBold: false, value: 'CONTACT_NAME' },
+            { title: 'First Name', isBold: false, value: 'FIRST_NAME' },
+            { title: 'Middle Name', isBold: false, value: 'MIDDLE_NAME' },
+            { title: 'Last Name', isBold: false, value: 'LAST_NAME' },
+            { title: 'Phone number', isBold: false, value: 'PHONE_NUMBER' },
+            { title: 'Country', isBold: false, value: 'COUNTRY' },
+            { title: 'Company name', isBold: false, value: 'COMPANY_NAME ' },
+            { title: 'Street address', isBold: false, value: 'STREET_ADDRESS' },
+            { title: 'City', isBold: false, value: 'CITY' },
+            { title: 'State/Province', isBold: false, value: 'STATE / PROVINCE' },
+            { title: 'Zip/Postal code', isBold: false, value: 'ZIP / POSTAL CODE' },
+            { title: 'Custom field:Email', isBold: false, value: 'CONTACT_CUSTOM_FIELD:Email' },
+    
+            { title: 'Date Shortcodes', isBold: true },
+            { title: 'Current day full date', isBold: false, value: 'CURRENT_DAY_FULL_DATE' },
+            { title: 'Current day number', isBold: false, value: 'CURRENT_DAY_NUMBER' },
+            { title: 'Current day name', isBold: false, value: 'CURRENT_DAY_NAME' },
+            { title: 'Current week', isBold: false, value: 'CURRENT_WEEK' },
+            { title: 'Current month number', isBold: false, value: 'CURRENT_MONTH_NUMBER' },
+            { title: 'Current month name', isBold: false, value: 'CURRENT_MONTH_NAME' },
+            { title: 'Current quarter', isBold: false, value: 'CURRENT_QUARTER' },
+            { title: 'Current year', isBold: false, value: 'CURRENT_YEAR' },
+            { title: 'Last day full date', isBold: false, value: 'LAST_DAY_FULL_DATE' },
+            { title: 'Last day number', isBold: false, value: 'LAST_DAY_NUMBER' },
+            { title: 'Last day name', isBold: false, value: 'LAST_DAY_NAME' },
+            { title: 'Last week', isBold: false, value: 'LAST_WEEK' },
+            { title: 'Last month number', isBold: false, value: 'LAST_MONTH_NUMBER' },
+            { title: 'Last month name', isBold: false, value: 'LAST_MONTH_NAME' },
+            { title: 'Last quarter', isBold: false, value: 'LAST_QUARTER' },
+            { title: 'Last_year', isBold: false, value: 'LAST_YEAR' },
+            { title: 'Next day full date', isBold: false, value: 'NEXT_DAY_FULL_DATE' },
+            { title: 'Next day number', isBold: false, value: 'NEXT_DAY_NUMBER' },
+            { title: 'Next day name', isBold: false, value: 'NEXT_DAY_NAME' },
+            { title: 'Next week', isBold: false, value: 'NEXT_WEEK' },
+            { title: 'Next month number', isBold: false, value: 'NEXT_MONTH_NUMBER' },
+            { title: 'Next month name', isBold: false, value: 'NEXT_MONTH_NAME' },
+            { title: 'Next quarter', isBold: false, value: 'NEXT_QUARTER' },
+            { title: 'Next year', isBold: false, value: 'NEXT_YEAR' }
+    
+    
+    
+          ];
+          setShortcuts(contactShortcuts);
         } else if (selectedOption === 'account') {
-            // Set account shortcuts
-            const accountShortcuts = [
-                { title: 'Account Shortcodes', isBold: true },
-                { title: 'Account Name', isBold: false, value: 'Account_Name' },
-                { title: 'Date Shortcodes', isBold: true },
-                { title: 'Current day full date', isBold: false, value: 'Current_day_full_date' },
-                { title: 'Current day number', isBold: false, value: 'Current_day_number' },
-                { title: 'Current day name', isBold: false, value: 'Current_day _name' },
-                { title: 'Current week', isBold: false, value: 'Current_week' },
-                { title: 'Current month name', isBold: false, value: 'Current_month_name' },
-                { title: 'Current quarter', isBold: false, value: 'Current_quarter' },
-                { title: 'Current year', isBold: false, value: 'Current_year' },
-                { title: 'Last day number', isBold: false, value: 'Last_day_number' },
-                { title: 'Last day name', isBold: false, value: 'Last_day_name' },
-                { title: 'Last week', isBold: false, value: 'Last_week' },
-                { title: 'Last month number', isBold: false, value: 'Last_month_number' },
-                { title: 'Last month name', isBold: false, value: 'Last_month_name' },
-                { title: 'Last quarter', isBold: false, value: 'Last_quarter' },
-                { title: 'Last_year', isBold: false, value: 'Phone_number' },
-                { title: 'Next day full date', isBold: false, value: 'Phone_number' },
-                { title: 'Next day number', isBold: false, value: 'Phone_number' },
-                { title: 'Next day name', isBold: false, value: 'Next_day_name' },
-                { title: 'Next week', isBold: false, value: 'Next_week' },
-                { title: 'Next month number', isBold: false, value: 'Next_month_number' },
-                { title: 'Next month name', isBold: false, value: 'Next_month_name' },
-                { title: 'Next quarter', isBold: false, value: 'Next_quarter' },
-                { title: 'Next year', isBold: false, value: 'Next_year' }
-
-
-
-            ]; setShortcuts(accountShortcuts);
+          // Set account shortcuts
+          const accountShortcuts = [
+            { title: 'Account Shortcodes', isBold: true },
+            { title: 'Account Name', isBold: false, value: 'ACCOUNT_NAME' },
+            { title: 'Custom field:Account', isBold: false, value: 'ACCOUNT_CUSTOM_FIELD:Website' },
+            { title: 'Date Shortcodes', isBold: true },
+            { title: 'Current day full date', isBold: false, value: 'CURRENT_DAY_FULL_DATE' },
+            { title: 'Current day number', isBold: false, value: 'CURRENT_DAY_NUMBER' },
+            { title: 'Current day name', isBold: false, value: 'CURRENT_DAY_NAME' },
+            { title: 'Current week', isBold: false, value: 'CURRENT_WEEK' },
+            { title: 'Current month number', isBold: false, value: 'CURRENT_MONTH_NUMBER' },
+            { title: 'Current month name', isBold: false, value: 'CURRENT_MONTH_NAME' },
+            { title: 'Current quarter', isBold: false, value: 'CURRENT_QUARTER' },
+            { title: 'Current year', isBold: false, value: 'CURRENT_YEAR' },
+            { title: 'Last day full date', isBold: false, value: 'LAST_DAY_FULL_DATE' },
+            { title: 'Last day number', isBold: false, value: 'LAST_DAY_NUMBER' },
+            { title: 'Last day name', isBold: false, value: 'LAST_DAY_NAME' },
+            { title: 'Last week', isBold: false, value: 'LAST_WEEK' },
+            { title: 'Last month number', isBold: false, value: 'LAST_MONTH_NUMBER' },
+            { title: 'Last month name', isBold: false, value: 'LAST_MONTH_NAME' },
+            { title: 'Last quarter', isBold: false, value: 'LAST_QUARTER' },
+            { title: 'Last_year', isBold: false, value: 'LAST_YEAR' },
+            { title: 'Next day full date', isBold: false, value: 'NEXT_DAY_FULL_DATE' },
+            { title: 'Next day number', isBold: false, value: 'NEXT_DAY_NUMBER' },
+            { title: 'Next day name', isBold: false, value: 'NEXT_DAY_NAME' },
+            { title: 'Next week', isBold: false, value: 'NEXT_WEEK' },
+            { title: 'Next month number', isBold: false, value: 'NEXT_MONTH_NUMBER' },
+            { title: 'Next month name', isBold: false, value: 'NEXT_MONTH_NAME' },
+            { title: 'Next quarter', isBold: false, value: 'NEXT_QUARTER' },
+            { title: 'Next year', isBold: false, value: 'NEXT_YEAR' }
+    
+    
+    
+          ]; setShortcuts(accountShortcuts);
         }
-    }, [selectedOption]);
+      }, [selectedOption]);
 
     const handleOptionChange = (value) => {
         setSelectedOption(value);
@@ -139,14 +143,10 @@ const UpdateEmail = () => {
 
 
 
-    const [selectedOptions, setSelectedOptions] = useState(null);
 
 
 
-    const handleChange = (selectedOption) => {
-        setSelectedOptions(selectedOption.value);
-        console.log("Selected option:", selectedOptions); // Log the selected option
-    };
+
 
 
     const [showDropdown, setShowDropdown] = useState(false);
@@ -167,25 +167,26 @@ const UpdateEmail = () => {
     const handleAddShortcut = (shortcut) => {
         setInputText(prevText => prevText + `[${shortcut}]`);
         setShowDropdown(false);
-      
-       
+
+
     };
 
     const handleAddShortcuthtml = (shortcut) => {
         setTextareaValue(prevText => prevText + `[${shortcut}]`);
         setShowDropdownhtml(false);
     };
-    
+
 
     const [textareaValue, setTextareaValue] = useState('');
+
     const onTextareaChange = (e) => {
         const { value } = e.target;
         setTextareaValue(value);
         console.log(textareaValue)
-    
+
     };
 
-    
+
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
@@ -213,10 +214,7 @@ const UpdateEmail = () => {
         setShowDropdownhtml(!showDropdownhtml);
         setSearchTerm(''); // Clear search term when showing the dropdown
     };
-    const toggleDropdowneditor = () => {
-        setShowDropdown(!showDropdown);
-        setSearchTerm(''); // Clear search term when showing the dropdown
-    };
+
 
 
     const handleInputChange = (e) => {
@@ -237,23 +235,15 @@ const UpdateEmail = () => {
     };
 
 
-    const [textData, setTextData] = useState("")
-    const [editorState, setEditorState] = useState(() => EditorState.createEmpty());
-
-
-
- 
 
 
 
 
-    const onEditorStateChange = (newEditorState) => {
-        setEditorState(newEditorState);
-        // console.log("Editor Content:", newEditorState.getCurrentContent().getPlainText()); // Log the content of the editor to the console
-        setTextData(newEditorState.getCurrentContent().getPlainText())
 
 
-    };
+
+
+
 
 
 
@@ -261,13 +251,13 @@ const UpdateEmail = () => {
 
     const handleInputChange1 = (e) => {
 
-          
+
         setTemplateName(e.target.value);
 
 
     };
 
-    
+
 
 
 
@@ -313,98 +303,90 @@ const UpdateEmail = () => {
     }
 
 
+    const tempallvalue = (txt) => {
+      
+       console.log(txt);
+        setTemplateName(txt.templatename);
+        setInputText(txt.emailsubject)
+        setFromdataTemp(txt.from && { label: txt.from.username })
+        setTextareaValue(txt.emailbody)
 
-   
-    
-      //get id wise template Record 
-      const [tempvalues, setTempValues] = useState();
-      const [emailTemplate, setEmailTemplate] = useState(null); // State to store emailTemplate data
-      const [fromtempdata, setFromdataTemp] = useState();
-      const [fromtempdatasend, setFromdataTempsend] = useState();
-      useEffect(() => {
+
+    };
+
+
+
+
+    //get id wise template Record 
+    const [tempvalues, setTempValues] = useState();
+    // State to store emailTemplate data
+    const [fromtempdata, setFromdataTemp] = useState();
+
+    useEffect(() => {
         const fetchData = async () => {
-          try {
-            const requestOptions = {
-              method: "GET",
-              redirect: "follow"
-            };
-    
-            const response = await fetch("http://127.0.0.1:8080/workflow/emailtemplate/emailtemplateList/" + _id, requestOptions);
-            const result = await response.json()
-            setEmailTemplate(result.emailTemplate)
-            setTempValues(result.emailTemplate)
+            try {
+                const requestOptions = {
+                    method: "GET",
+                    redirect: "follow"
+                };
 
-           
-        
-              tempallvalue()
+                const response = await fetch("http://192.168.1.116:8080/workflow/emailtemplate/emailtemplateList/" + _id, requestOptions);
+                const result = await response.json();
 
-
-          } catch (error) {
-            console.error(error);
-          }
+                setTempValues(result.emailTemplate);
+                tempallvalue(result.emailTemplate)
+            } catch (error) {
+                console.error(error);
+            }
         };
-    
+
         fetchData();
-      }, []); 
-
-      useEffect(() => {
-        if (tempvalues) {
-          tempallvalue();
-        }
-      }, [tempvalues]);
+    }, []);
 
 
-      const tempallvalue = () => {
-        setTemplateName(tempvalues.templatename);
-        setInputText(tempvalues.emailsubject)
-        setFromdataTemp(tempvalues.from && { label: tempvalues.from.username })
-        setTextData(tempvalues.emailbody)
 
-       
-      };
 
-      
-
-    
-
-      const handleuserChange = (fromtempdata) => {
-        setFromdataTemp(fromtempdata);
-
-        
-       
-      
-      }
 
   
 
+    const handleuserChange = (fromtempdata) => {
+        setFromdataTemp(fromtempdata);
 
 
 
 
-
-      const animatedComponents = makeAnimated();
-      const [userdata, setUserData] = useState([]);
-
-      
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await fetch("http://127.0.0.1:8080/common/user");
-      const data = await response.json();
-      setUserData(data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
     }
-  };
 
-  // console.log(userdata);
-  const options = userdata.map((user) => ({
-    value: user._id,
-    label: user.username
-  }));
+
+
+
+
+
+
+
+    const animatedComponents = makeAnimated();
+    const [userdata, setUserData] = useState([]);
+
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        try {
+            const response = await fetch("http://192.168.1.116:8080/common/user");
+            const data = await response.json();
+            setUserData(data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
+    // console.log(userdata);
+    const options = userdata.map((user) => ({
+        value: user._id,
+        label: user.username
+    }));
 
     return (
         <div className="panel">
@@ -443,13 +425,13 @@ const UpdateEmail = () => {
                         <div className="m-t-15 m-b-10">
                             <h2 className="panel__subtitle d-flex flex-center-align">
                                 Mode
-                                <a
-                                    href="#"
+                                <button style={{background:"none",border:'none'}}
+                                    type="button"
                                     className="help-block__link"
                                     onClick={toggleHelp}
                                 >
                                     <BsQuestionCircle className={`v2-icon ${isHelpOpen ? 'active' : ''}`} color="#007bff" />
-                                </a>
+                                </button>
                                 {/* Render your help content conditionally based on `isHelpOpen` state */}
                                 {isHelpOpen && (
                                     <div className="help-content">
@@ -503,27 +485,27 @@ const UpdateEmail = () => {
                             </div>
                         </div>
 
-                  
+
 
                         <div className="form__row">
                             <div className="form__col form__col_100">
                                 <div className="_select_5n3c2_115">
                                     <label className="_selectLabel_5n3c2_221">From</label>
                                     <div className="react-select-container css-b62m3t-container">
-                     
+
                                         <div className="select-container">
-                                            
-                                         <Select className='job-template-select-dropdown'
-                                         placeholder="from"
-                                         options={options}
-                                         components={animatedComponents}
-                                         isMulti ={false}// Enable multi-select
-                                          isSearchable // Enable search
-                                          value={fromtempdata}
-                                           isClearable
-                                         onChange={handleuserChange}
-              
-              />
+
+                                            <Select className='job-template-select-dropdown'
+                                                placeholder="from"
+                                                options={options}
+                                                components={animatedComponents}
+                                                isMulti={false}// Enable multi-select
+                                                isSearchable // Enable search
+                                                value={fromtempdata}
+                                                isClearable
+                                                onChange={handleuserChange}
+
+                                            />
 
 
 
@@ -559,7 +541,7 @@ const UpdateEmail = () => {
 
                         <div className="form__row">
 
-                            <button type="button" className="btn  add-shortcut-button" onClick={toggleDropdown}>
+                            <button type="button" style={{background:"none",border:'none'}} className="btn  add-shortcut-button" onClick={toggleDropdown}>
                                 <RiAddCircleLine className="add-shortcut-icon" /> Add Shortcode
                             </button>
                             {showDropdown && (
@@ -632,35 +614,35 @@ const UpdateEmail = () => {
 
                                         </div>
                                     </div>
-                                    <button type="button" className="btn  add-shortcut-button" onClick={toggleDropdownhtml}>
-                                <RiAddCircleLine className="add-shortcut-icon" /> Add Shortcode
-                            </button>
-                            {showDropdownhtml && (
-                                <div className="dropdown" ref={dropdownRef}>
-                                    <div className="search-bar">
-                                        <input
-                                            type="text"
-                                            placeholder="Search shortcuts"
-                                            value={searchTerm}
-                                            onChange={handleSearchChange}
-                                        />
-                                        <button className="close-icon" style={{fontSize:"20px",marginTop:'4px'}} onClick={toggleDropdown}>
-                                        <IoIosCloseCircleOutline />
-                                        </button>
-                                    </div>
-                                    <ul className="dropdown-list">
-                                        {filteredShortcuts.map(shortcut => (
-                                            <div key={shortcut.title}>
-                                                <span
-                                                    style={{ fontWeight: shortcut.isBold ? 'bold' : 'normal', cursor: 'pointer' }}
-                                                    onClick={() => handleAddShortcuthtml(shortcut.value)}>
-                                                    {shortcut.title}
-                                                </span>
+                                    <button type="button" style={{background:"none",border:'none'}}  className="btn  add-shortcut-button" onClick={toggleDropdownhtml}>
+                                        <RiAddCircleLine className="add-shortcut-icon" /> Add Shortcode
+                                    </button>
+                                    {showDropdownhtml && (
+                                        <div className="dropdown" ref={dropdownRef}>
+                                            <div className="search-bar">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search shortcuts"
+                                                    value={searchTerm}
+                                                    onChange={handleSearchChange}
+                                                />
+                                                <button className="close-icon" style={{ fontSize: "20px", marginTop: '4px' }} onClick={toggleDropdown}>
+                                                    <IoIosCloseCircleOutline />
+                                                </button>
                                             </div>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
+                                            <ul className="dropdown-list">
+                                                {filteredShortcuts.map(shortcut => (
+                                                    <div key={shortcut.title}>
+                                                        <span
+                                                            style={{ fontWeight: shortcut.isBold ? 'bold' : 'normal', cursor: 'pointer' }}
+                                                            onClick={() => handleAddShortcuthtml(shortcut.value)}>
+                                                            {shortcut.title}
+                                                        </span>
+                                                    </div>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
                                 </section>
                             )}
 
@@ -680,35 +662,35 @@ const UpdateEmail = () => {
                                         </div>
                                     </div>
 
-                                    <button type="button" className="btn  add-shortcut-button" onClick={toggleDropdownhtml}>
-                                <RiAddCircleLine className="add-shortcut-icon" /> Add Shortcode
-                            </button>
-                            {showDropdownhtml && (
-                                <div className="dropdown" ref={dropdownRef}>
-                                    <div className="search-bar">
-                                        <input
-                                            type="text"
-                                            placeholder="Search shortcuts"
-                                            value={searchTerm}
-                                            onChange={handleSearchChange}
-                                        />
-                                        <button className="close-icon" style={{fontSize:"20px",marginTop:'4px'}} onClick={toggleDropdown}>
-                                        <IoIosCloseCircleOutline />
-                                        </button>
-                                    </div>
-                                    <ul className="dropdown-list">
-                                        {filteredShortcuts.map(shortcut => (
-                                            <div key={shortcut.title}>
-                                                <span
-                                                    style={{ fontWeight: shortcut.isBold ? 'bold' : 'normal', cursor: 'pointer' }}
-                                                    onClick={() => handleAddShortcuthtml(shortcut.value)}>
-                                                    {shortcut.title}
-                                                </span>
+                                    <button type="button" style={{background:"none",border:'none'}} className="btn  add-shortcut-button" onClick={toggleDropdownhtml}>
+                                        <RiAddCircleLine className="add-shortcut-icon" /> Add Shortcode
+                                    </button>
+                                    {showDropdownhtml && (
+                                        <div className="dropdown" ref={dropdownRef}>
+                                            <div className="search-bar">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search shortcuts"
+                                                    value={searchTerm}
+                                                    onChange={handleSearchChange}
+                                                />
+                                                <button className="close-icon" style={{ fontSize: "20px", marginTop: '4px' }} onClick={toggleDropdown}>
+                                                    <IoIosCloseCircleOutline />
+                                                </button>
                                             </div>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
+                                            <ul className="dropdown-list">
+                                                {filteredShortcuts.map(shortcut => (
+                                                    <div key={shortcut.title}>
+                                                        <span
+                                                            style={{ fontWeight: shortcut.isBold ? 'bold' : 'normal', cursor: 'pointer' }}
+                                                            onClick={() => handleAddShortcuthtml(shortcut.value)}>
+                                                            {shortcut.title}
+                                                        </span>
+                                                    </div>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
                                 </section>
                             )}
 
@@ -720,7 +702,7 @@ const UpdateEmail = () => {
                 </form>
 
             </div>
-      
+
             <div className="form__row m-t-30 d-flex">
                 <div className="form__col form__col_50 d-flex">
                     <button type="submit" onClick={SendData} className="btn btn-success btn-block mr-1">
@@ -738,4 +720,4 @@ const UpdateEmail = () => {
     );
 };
 
-export default UpdateEmail;
+export default Shortcodes;

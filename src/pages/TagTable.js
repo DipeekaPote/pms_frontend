@@ -97,12 +97,12 @@ const TagTable = () => {
   };
   return (
     <div>
-      <div className="tag-header col-12" style={{ display: "flex", padding: "20px" }}>
+      <div className="tag-header col-12" style={{ display: "flex", padding: "20px", }}>
         <div className="tag-title col-6">
           <h2 style={{ fontSize: "30px" }}>Tags</h2>
         </div>
         <div className="tag-button col-6">
-          <button className="create-tagbtn col-2" onClick={handleTagSidebar}>
+          <button   className="create-tagbtn col-2" onClick={handleTagSidebar}>
             New Tag
           </button>
         </div>
@@ -112,7 +112,7 @@ const TagTable = () => {
         <table className="col-12">
           <thead>
             <tr>
-              <th>Tag</th>
+              <th >Tag</th>
               <th>Accounts</th>
               <th>Archived accounts</th>
               <th>Pending tasks</th>

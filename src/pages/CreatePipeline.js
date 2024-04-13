@@ -220,9 +220,24 @@ const CreatePipeline = () => {
         };
 
         fetch("http://127.0.0.1:8080/workflow/pipeline", requestOptions)
-            .then((response) => response.text())
-            .then((result) => console.log(result))
-            .catch((error) => console.error(error));
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then((result) => {
+            // Display success toast
+            toast.success("Pipeline created successfully");
+            setShowForm(false)
+        // Log the result if needed
+            // Additional logic after successful creation if needed
+        })
+        .catch((error) => {
+            // Display error toast
+                    toast.error("Failed to create pipeline");
+        });
+
     }
 
 
@@ -712,6 +727,7 @@ const CreatePipeline = () => {
                     </div>
                 )}
             </>
+            <ToastContainer/>
         </div >
     );
 
