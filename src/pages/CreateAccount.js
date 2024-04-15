@@ -16,30 +16,61 @@ import { useNavigation } from "react";
 
 import { FaPlusCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer , toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function CreateAccount({ handleAddAccount }) {
-const [login_id,setLogin_id]=useState("")
+
+
+
+  const [countries, setCountries] = useState([]);
+
+  const [states, setStates] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState(null);
+
+  useEffect(() => {
+    fetch("https://countriesnow.space/api/v0.1/countries/states")
+      .then((response) => response.json())
+      .then((data) => {
+        setCountries(data.data);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
+
+  useEffect(() => {
+    if (selectedCountry) {
+      const selectedCountryData = countries.find(
+        (country) => country.name === selectedCountry
+      );
+      if (selectedCountryData) {
+        setStates(selectedCountryData.states);
+      }
+    }
+  }, [selectedCountry, countries]);
+  const handleCountryChange = (e) => {
+    setSelectedCountry(e.target.value);
+  };
+
+  const [login_id, setLogin_id] = useState("")
   const handlelogin = (checked) => {
     setLogin_id(checked);
-};
+  };
 
 
 
-const [notify,setNotify]=useState("")
+  const [notify, setNotify] = useState("")
   const handleNotify = (checked) => {
     setNotify(checked);
-};
+  };
 
 
-const [emailSync,setEmailSync]=useState("")
+  const [emailSync, setEmailSync] = useState("")
   const handleEmailSync = (checked) => {
     setEmailSync(checked);
-};
+  };
 
 
-// console.log((notify),(emailSync),(login_id))
+  // console.log((notify),(emailSync),(login_id))
 
 
 
@@ -63,7 +94,7 @@ const [emailSync,setEmailSync]=useState("")
     setFormStage(option);
   };
   //todo stage individual
-  const [clientType, setClientType] = useState("");
+  const [clientType, setClientType] = useState("Individual");
   const [accountName, setAccountName] = useState("");
 
   const [teamMember, SetTeamMember] = useState("");
@@ -118,6 +149,8 @@ const [emailSync,setEmailSync]=useState("")
   const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const animatedComponents = makeAnimated();
+
+
 
   useEffect(() => {
     fetchData();
@@ -182,6 +215,79 @@ const [emailSync,setEmailSync]=useState("")
   };
 
 
+  const [userdata, setUserData] = useState([]);
+  const [selecteduser, setSelectedUser] = useState();
+  const [combineduserValues, setCombineduserValues] = useState([]);
+
+  const handleuserChange = (selectedOptions) => {
+    setSelectedUser(selectedOptions);
+    // Map selected options to their values and send as an array
+    const selectedValues = selectedOptions.map((option) => option.value);
+    setCombineduserValues(selectedValues);
+  }
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8080/common/user");
+      const data = await response.json();
+      setUserData(data);
+
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  // console.log(userdata);
+  const useroptions = userdata.map((user) => ({
+    value: user._id,
+    label: user.username
+  }));
+
+
+  console.log(combineduserValues)
+
+
+  const [FolderData, setFolderData] = useState([]);
+  const [selectedFolder, setSelectedFolder] = useState();
+
+
+
+
+
+  const handleFolderChange = (selectedOptions) => {
+    setSelectedFolder(selectedOptions);
+    // Map selected options to their values and send as an array
+
+  }
+
+  useEffect(() => {
+    fetchFolderData();
+  }, []);
+
+  const fetchFolderData = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8080/common/folder");
+      const data = await response.json();
+
+      setFolderData(data.folderTemplates);
+
+
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  // console.log(userdata);
+  const folderoptions = FolderData.map((folder) => ({
+    value: folder._id,
+    label: folder.templatename
+  }));
+
+
+
+
   const handleTagChange = (selectedOptions) => {
     setSelectedTags(selectedOptions);
 
@@ -206,46 +312,47 @@ const [emailSync,setEmailSync]=useState("")
 
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    
 
-    if(clientType === "Individual"){
+
+    if (clientType === "Individual") {
 
       const raw = JSON.stringify({
         clientType: clientType,
         accountName: accountName,
         tags: combinedValues,
-        teamMembers: "65c7272f5c720e5168273d3c",
-        folderTemplate: "abc1234567",
+        teamMembers: combineduserValues,
+        folderTemplate: selectedFolder.value,
         contacts: myArray
       });
-      
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
 
-    fetch("http://127.0.0.1:8080/admin/accountdetails/", requestOptions)
-      .then((response) => response.text())
-      .then((response) => response.text())
-      .then((result) => {
+      const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow",
+      };
+
+      fetch("http://127.0.0.1:8080/admin/accountdetails/", requestOptions)
+        .then((response) => response.text())
+
+        .then((result) => {
           console.log(result); // Log the result
           toast.success('Form submitted successfully'); // Display success toast
-      })
-      .catch((error) => {
+          window.location.reload();
+        })
+        .catch((error) => {
           console.error(error); // Log the error
           toast.error('An error occurred while submitting the form'); // Display error toast
-      });
-    }else if(clientType === "Company"){
+        });
+    } else if (clientType === "Company") {
 
       const raw = JSON.stringify({
         clientType: clientType,
         accountName: accountName,
         tags: combinedValues,
-        teamMembers: "65c7272f5c720e5168273d3c",
-        folderTemplate: "abc1234567",
-  
+        teamMembers: combineduserValues,
+        folderTemplate: selectedFolder.value,
+
         companyName: companyName,
         country: cCountry,
         streetAddress: cStreetAddress,
@@ -254,32 +361,33 @@ const [emailSync,setEmailSync]=useState("")
         contacts: myArray,
       });
 
-      
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
 
-    fetch("http://127.0.0.1:8080/admin/accountdetails/", requestOptions)
-    .then((response) => response.text())
-    .then((result) => {
-        console.log(result); // Log the result
-        toast.success('Form submitted successfully'); // Display success toast
-    })
-    .catch((error) => {
-        console.error(error); // Log the error
-        toast.error('An error occurred while submitting the form'); // Display error toast
-    });
+      const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow",
+      };
+
+      fetch("http://127.0.0.1:8080/admin/accountdetails/", requestOptions)
+        .then((response) => response.text())
+        .then((result) => {
+          console.log(result); // Log the result
+          toast.success('Form submitted successfully'); // Display success toast
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.error(error); // Log the error
+          toast.error('An error occurred while submitting the form'); // Display error toast
+        });
 
     }
 
 
-    
 
 
-    
+
+
     //todo contact
   };
 
@@ -293,7 +401,7 @@ const [emailSync,setEmailSync]=useState("")
       clientType: clientType,
       accountName: accountName,
       tags: combinedValues,
-      teamMembers: "65c7272f5c720e5168273d3c",
+      teamMembers: combineduserValues,
       folderTemplate: "abc1234567",
 
       companyName: companyName,
@@ -382,11 +490,16 @@ const [emailSync,setEmailSync]=useState("")
       .then((response) => {
         console.log(JSON.stringify(response.data));
         setContactId(JSON.stringify(response.data.newContact._id));
-        appendItem((response.data.newContact._id))
+        appendItem((response.data.newContact._id));
+
+        toast.success("Contact sent successfully!")
+
 
       })
       .catch((error) => {
         console.log(error);
+
+        toast.error("Failed to send contact. Please try again later.")
       });
   };
 
@@ -490,11 +603,33 @@ const [emailSync,setEmailSync]=useState("")
                     </div>
                     <div>
                       <label className="label">Team Member:</label>
-                      <TeamMember addTeamMember={handleAddTeamMember} />
+                      {/* <TeamMember addTeamMember={handleAddTeamMember} /> */}
+                      <Select
+                        options={useroptions}
+                        components={animatedComponents}
+                        isMulti // Enable multi-select
+                        value={selecteduser}
+                        onChange={handleuserChange}
+                        placeholder="Select Team..."
+                        isSearchable // Enable search
+                        isClearable//
+                      />
+
+
                     </div>
                     <div>
                       <label className="label">Folder Template :</label>
-                      <AddFolderTemplate addFolderTemplate={handleAddFolderTemplate} />
+                      <Select
+                        options={folderoptions}
+                        components={animatedComponents}
+                        isMulti={false} // Enable multi-select
+                        value={selectedFolder}
+                        onChange={handleFolderChange}
+                        placeholder="Select Folder..."
+                        isSearchable
+                        isClearable//
+
+                      />
                     </div>
                     <div>
                       <button
@@ -561,7 +696,28 @@ const [emailSync,setEmailSync]=useState("")
 
                     <div>
                       <label className="label">Country:</label>
-                      <input className="col-12 input" type="text" name="name" placeholder="" onChange={(e) => SetCCountry(e.target.value)} />
+
+
+                      <select
+                        type="text"
+                        id="country"
+                        value={cCountry}
+                        onChange={(e) => SetCCountry(e.target.value)}
+                        style={{
+                          width: "100%",
+                          boxSizing: "border-box",
+                          border: "1px solid #ddd",
+                          borderRadius: "5px",
+                          height: "40px",
+                        }}
+                      >
+                        <option value="">Select a country</option>
+                        {countries.map((country) => (
+                          <option key={country.name} value={country.name}>
+                            {country.name}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                     <div>
                       <label className="label">Street address::</label>
@@ -680,55 +836,58 @@ const [emailSync,setEmailSync]=useState("")
                         </div>
                         <div className="btnSlide col-12" style={{ padding: "0 6% 0 10% " }}>
                           <div className="col-2" style={{ width: "15%" }}>
-                          <Switch
-                                    onChange={handlelogin}
-                                    checked={login_id}
-                                    onColor="#3A91F5"
-                                    onHandleColor="#FFF"
-                                    handleDiameter={20}
-                                    uncheckedIcon={false}
-                                    checkedIcon={false}
-                                    height={25}
-                                    width={45}
-                                    name="login_id"
-                                     id={`login_id${index}`}
-                                    className="react-switch"
-                                />
+                            <Switch
+                              onChange={handlelogin}
+                              checked={login_id}
+                              onColor="#3A91F5"
+                              onHandleColor="#FFF"
+                              handleDiameter={20}
+                              uncheckedIcon={false}
+                              checkedIcon={false}
+                              height={25}
+                              width={45}
+                              name="login_id"
+                              id={`login_id${index}`}
+                              className="react-switch"
+                            />
                           </div>
                           <div className=" col-2">
                             <label style={{ fontSize: "12px", color: "black" }}>Login</label>
                           </div>
-                      
+
                           <div className="col-2" style={{ width: "15%" }}>
-                          <Switch
-                                    onChange={handleNotify}
-                                    checked={notify}
-                                    onColor="#3A91F5"
-                                    onHandleColor="#FFF"
-                                    handleDiameter={20}
-                                    uncheckedIcon={false}
-                                    checkedIcon={false}
-                                    height={25}
-                                    width={45}
-                                    className="react-switch"
-                                />
+                            <Switch
+
+
+
+                              onChange={handleNotify}
+                              checked={notify}
+                              onColor="#3A91F5"
+                              onHandleColor="#FFF"
+                              handleDiameter={20}
+                              uncheckedIcon={false}
+                              checkedIcon={false}
+                              height={25}
+                              width={45}
+                              className="react-switch"
+                            />
                           </div>
                           <div className=" col-2">
                             <label style={{ fontSize: "12px", color: "black" }}>Notify</label>
                           </div>
                           <div className="col-2" style={{ width: "15%" }}>
-                          <Switch
-                                    onChange={handleEmailSync}
-                                    checked={emailSync}
-                                    onColor="#3A91F5"
-                                    onHandleColor="#FFF"
-                                    handleDiameter={20}
-                                    uncheckedIcon={false}
-                                    checkedIcon={false}
-                                    height={25}
-                                    width={45}
-                                    className="react-switch"
-                                />
+                            <Switch
+                              onChange={handleEmailSync}
+                              checked={emailSync}
+                              onColor="#3A91F5"
+                              onHandleColor="#FFF"
+                              handleDiameter={20}
+                              uncheckedIcon={false}
+                              checkedIcon={false}
+                              height={25}
+                              width={45}
+                              className="react-switch"
+                            />
                           </div>
                           <div className=" col-2">
                             <label style={{ fontSize: "12px", color: "black" }}>Email Sync</label>
@@ -761,6 +920,7 @@ const [emailSync,setEmailSync]=useState("")
                         <div className=" col-12" style={{ padding: "0 10px 0 10px " }}>
                           <label htmlFor={`country${index}`}>Country:</label>
                           <input style={{ display: "flex" }} className="col-4 input" type="text" name="country" id={`country${index}`} value={contact.country} onChange={(e) => handleInputChange(index, e)} />
+                          
                         </div>
                         <div className=" col-12" style={{ padding: "0 10px 0 10px " }}>
                           <label htmlFor={`streetAddress${index}`}>Street address:</label>
@@ -831,7 +991,7 @@ const [emailSync,setEmailSync]=useState("")
             </div>
           </div>
         </div>
-        <ToastContainer/>
+        <ToastContainer />
       </div>
 
       {renderCurrentStage()}

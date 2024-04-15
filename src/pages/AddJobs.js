@@ -10,6 +10,7 @@ import makeAnimated from "react-select/animated";
 import "./addjobs.css"
 import TextEditor from '../component/TextEditor';
 import Priority from '../component/priority.js'
+import { ToastContainer, toast } from 'react-toastify';
 
 // import { useHistory } from 'react-router-dom';
 const AddJobs = () => {
@@ -167,7 +168,7 @@ const AddJobs = () => {
             const response = await fetch("http://127.0.0.1:8080/workflow/jobtemplate");
             const data = await response.json();
             setjobtemplatedata(data.JobTemplates);
-            console.log(data.JobTemplates)
+
         } catch (error) {
             console.error("Error fetching data:", error);
         }
@@ -259,9 +260,25 @@ const AddJobs = () => {
         };
 
         fetch("http://127.0.0.1:8080/workflow/job/", requestOptions)
-            .then((response) => response.text())
-            .then((result) => console.log(result))
-            .catch((error) => console.error(error));
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+
+            .then((result) => {
+                // Handle success
+                toast.success("Job Template created successfully");
+                window.location.reload()
+                
+            })
+            .catch((error) => {
+                // Handle errors
+                console.error(error);
+                toast.error("Failed to create Job Template");
+            })
+
     }
 
 
@@ -345,7 +362,7 @@ const AddJobs = () => {
                             <Priority onPriorityChange={handlePriorityChange} className='add-jobs-select-dropdown' />
                         </div>
                         <div style={{ marginTop: '20px', }}>
-                            <TextEditor onDescriptionChange={updateJobDescription} />
+                            <TextEditor onDescriptionChange={updateJobDescription} selectedText={jobDescription} />
                         </div>
                         <div className='dates-switches col-12' style={{ marginTop: '80px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
 
@@ -410,7 +427,7 @@ const AddJobs = () => {
 
                                 </div>
                                 <div className='col-12' style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '20px' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }} className='col-2'> <p>Starts In </p>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }} className='col-2'> <p>Due In </p>
                                         <SlQuestion style={{ color: 'blue' }} />
                                     </div>
                                     <div className='col-5'>
@@ -454,7 +471,7 @@ const AddJobs = () => {
                 </div>
             </div>
 
-
+<ToastContainer/>
         </>
     );
 }

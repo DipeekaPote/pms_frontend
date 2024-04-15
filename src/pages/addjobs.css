@@ -91,4 +91,10 @@
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
   }
  
- 
+ .add-jobs-container {
+  height: 80vh;
+  overflow-y: auto;
+ }
+ .add-jobs-container ::-webkit-scrollbar{
+  display : "none";
+ }

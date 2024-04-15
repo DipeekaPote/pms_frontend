@@ -3,24 +3,20 @@ import "../../pages/Emailtemp/email.css"
 import Select from 'react-select';
 import { RiAddCircleLine } from 'react-icons/ri';
 
-
+import { useNavigate } from 'react-router-dom';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { BsQuestionCircle } from 'react-icons/bs';
 import { IoIosCloseCircleOutline } from "react-icons/io";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import 'react-toastify/dist/ReactToastify.css';
 import makeAnimated from 'react-select/animated';
 
 const NewTemplate = () => {
-
-
-   
+    const navigate = useNavigate();
 
     const [isHelpOpen, setIsHelpOpen] = useState(false);
-
-
-
 
     const toggleHelp = () => {
         setIsHelpOpen(!isHelpOpen);
@@ -281,11 +277,18 @@ const NewTemplate = () => {
 
 
 
+    const handleValidation = () => {
+        if (!inputText.trim() || !textareaValue.trim()) {
+            toast.error('Please fill in all fields');
+            return false;
+        }
+        return true;
+    };
 
 
     const SendData = () => {
         // Validation checks
-       
+        if (handleValidation()) {
     
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
@@ -316,15 +319,16 @@ const NewTemplate = () => {
             .then((result) => {
                 // Show success message
                 
-                console.log(result);
-
-            
+                toast.success('Data sent successfully');
+                 
+                navigate('/emailtemplate');     
             })
             .catch((error) => {
                 // Show error message
                 
                 console.error(error);
             });
+        }
     }
 
 
@@ -350,7 +354,7 @@ const NewTemplate = () => {
                         {/* Template Name */}
                         <section className="form__section">
                             <div className="form__row">
-                                <div className="form__col form__col_100">
+                                <div className="form_col form_col_100">
                                     <label className="_input_1k08l_1">
                                         <span className="_inputLabel_1k08l_46">Template Name</span>
 
@@ -382,7 +386,7 @@ const NewTemplate = () => {
                                 >
                                     <BsQuestionCircle className={`v2-icon ${isHelpOpen ? 'active' : ''}`} color="#007bff" />
                                 </button>
-                                {/* Render your help content conditionally based on `isHelpOpen` state */}
+                                {/* Render your help content conditionally based on isHelpOpen state */}
                                 {isHelpOpen && (
                                     <div className="help-content">
                                         {/* Your help content goes here */}
@@ -390,7 +394,7 @@ const NewTemplate = () => {
                                 )}
                             </h2>
                             <div className="form__row">
-                                <div className="form__col form__col_100 m-t-10">
+                                <div className="form_col form_col_100 m-t-10">
                                     <label className="radio" data-test="import-shared-radio-component">
                                         <div className="radio__header">
                                             <input
@@ -412,7 +416,7 @@ const NewTemplate = () => {
                                 </div>
                             </div>
                             <div className="form__row">
-                                <div className="form__col form__col_100 m-t-15">
+                                <div className="form_col form_col_100 m-t-15">
                                     <label className="radio" data-test="import-shared-radio-component">
                                         <div className="radio__header">
                                             <input
@@ -437,7 +441,7 @@ const NewTemplate = () => {
 
 
                         <div className="form__row">
-                            <div className="form__col form__col_100">
+                            <div className="form_col form_col_100">
                                 <div className="_select_5n3c2_115">
                                     <label className="_selectLabel_5n3c2_221">From</label>
                                     <div className="react-select-container css-b62m3t-container">
@@ -465,7 +469,7 @@ const NewTemplate = () => {
 
                         <section className="form__section">
                             <div className="form__row">
-                                <div className="form__col form__col_100">
+                                <div className="form_col form_col_100">
                                     <label className="_input_1k08l_1">
                                         <span className="_inputLabel_1k08l_46">Email Subject</span>
                                         <div className="_field_1k08l_14" data-test="input-wrapper">
@@ -542,7 +546,7 @@ const NewTemplate = () => {
                             {mode === 'wysiwyg' && (
                                 <section className="form__section">
                                     <div className="form__row">
-                                        <div className="form__col form__col_100">
+                                        <div className="form_col form_col_100">
                                             {/* Apply custom CSS to remove the border */}
 
 
@@ -597,7 +601,7 @@ const NewTemplate = () => {
                             {mode === 'html' && (
                                 <section className="form__section">
                                     <div className="form__row">
-                                        <div className="form__col form__col_100">
+                                        <div className="form_col form_col_100">
                                             <textarea
                                                 className="wysiwyg"
                                                 id="editor"
@@ -652,7 +656,7 @@ const NewTemplate = () => {
 
             </div>
             <div className="form__row m-t-30 d-flex">
-                <div className="form__col form__col_50 d-flex">
+                <div className="form_col form_col_50 d-flex">
                     <button type="submit" onClick={SendData}   href="/listemail"   className="btn btn-success btn-block mr-1">
                         Save & Exit
                     </button>
@@ -664,6 +668,7 @@ const NewTemplate = () => {
                     </button>
                 </div>
             </div>
+            <ToastContainer />
         </div>
     );
 };

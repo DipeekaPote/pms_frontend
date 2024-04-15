@@ -313,10 +313,16 @@ const CreatePipeline = () => {
 
 
 
+    const itemsPerPage = 4;
+    const [currentPage, setCurrentPage] = useState(1);
+    
 
+    const totalPages = Math.ceil(pipelineData.length / itemsPerPage);
 
-
-
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, pipelineData.length);
+    const currentTemplates = pipelineData.slice(startIndex, endIndex);
+    
 
 
 
@@ -339,7 +345,7 @@ const CreatePipeline = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {pipelineData && pipelineData.map(pipeline => (
+                                {currentTemplates && currentTemplates.map(pipeline => (
                                     <tr key={pipeline._id}>
                                         <td onClick={() => handleEdit(pipeline._id)} style={{ cursor: "pointer", color: 'blue' }}>{pipeline.pipelineName}</td>
                                         <td>
@@ -357,6 +363,16 @@ const CreatePipeline = () => {
                                 ))}
                             </tbody>
                         </table>
+                        <div>
+  <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+    Previous
+  </button>
+  <span> Page {currentPage} of {totalPages} </span>
+  <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+    Next
+  </button>
+</div>
+
                     </div>
                 }
             </div>

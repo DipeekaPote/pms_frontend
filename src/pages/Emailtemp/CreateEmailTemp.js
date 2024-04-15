@@ -1,41 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import "../../pages/Emailtemp/email.css"
-import { useNavigate } from 'react-router-dom'
-import { AiOutlineHolder } from "react-icons/ai";
+import '../../pages/Emailtemp/listdata.css';
+import { useNavigate } from 'react-router-dom';
+import { AiOutlineHolder } from 'react-icons/ai';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 const CreateEmailTemp = () => {
   const navigate = useNavigate();
 
-  const [showOptions, setShowOptions] = useState(false);
-  const [clickPosition, setClickPosition] = useState({ x: 0, y: 0 });
+  const [openMenuId, setOpenMenuId] = useState(null);
 
-  
   const toggleMenu = (_id) => {
-    setOpenMenuId(openMenuId === _id ? null:_id);
-};
-const [openMenuId, setOpenMenuId] = useState(null);
+    setOpenMenuId(openMenuId === _id ? null : _id);
+  };
 
   const handleEdit = (_id) => {
-    // Stop event propagation to prevent interference with other click events
-
     navigate('/upemailtemplate/' + _id);
   };
 
-
-
-
-
   const handleDelete = (_id) => {
-
-    console.log(_id)
+    console.log(_id);
 
     const requestOptions = {
-      method: "DELETE",
-      redirect: "follow"
+      method: 'DELETE',
+      redirect: 'follow',
     };
 
-    fetch("http://127.0.0.1:8080/workflow/emailtemplate/emailtemplateList/" + _id, requestOptions)
+    fetch('http://127.0.0.1:8080/workflow/emailtemplate/' + _id, requestOptions)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to delete item');
@@ -47,7 +38,6 @@ const [openMenuId, setOpenMenuId] = useState(null);
       })
       .catch((error) => {
         console.error(error);
-
       })
       .finally(() => {
         setTimeout(() => {
@@ -55,17 +45,10 @@ const [openMenuId, setOpenMenuId] = useState(null);
         }, 1000);
       });
   };
-  const handleDuplicate = () => {
 
-  };
-
-  // State to manage email templates data
   const [emailTemplates, setEmailTemplates] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Simulate fetching email templates data from an API
-
-  // Assuming you fetch email templates data from an API
   const fetchEmailTemplates = async () => {
     try {
       const response = await fetch('http://127.0.0.1:8080/workflow/emailtemplate/');
@@ -82,72 +65,112 @@ const [openMenuId, setOpenMenuId] = useState(null);
     }
   };
 
-
-
-  // Fetch email templates data when the component mounts
   useEffect(() => {
     fetchEmailTemplates();
   }, []);
 
+  const itemsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(emailTemplates.length / itemsPerPage);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+const endIndex = Math.min(startIndex + itemsPerPage, emailTemplates.length);
+const currentTemplates = emailTemplates.slice(startIndex, endIndex);
+
+
   return (
-    <div className="block-container clear-container" style={{ fontFamily: 'Arial, sans-serif' }}>
-      <ToastContainer />
-      <div className="panel" style={{ border: '1px solid #ccc', borderRadius: '5px', padding: '10px' }}>
-        <header className="panel__header">
-          <div className="_root_1rqwx_1 _gap20_1rqwx_29" style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <a className="btn" rel="" href="/newemailtemplate" style={{ textDecoration: 'none', color: '#fff', backgroundColor: '#007bff', padding: '8px 16px', borderRadius: '4px' }}>
-              <span className="btn__text">Create template</span>
-            </a>
-            <a className="btn btn_border" style={{ textDecoration: 'none', color: '#007bff', padding: '8px 16px', borderRadius: '4px', border: '1px solid #007bff', marginRight: '800px' }}>
-              <span className="btn__text">Copy from library</span>
-            </a>
-          </div>
-        </header>
-        <div className="panel__content">
-          {isLoading ? (
-            <div className="-loading" style={{ textAlign: 'center' }}>
-              <div className="-loading-inner">Loading...</div>
+    <div className="Emailtemp" style={{ alignItems: 'center', margin: '48px' }}>
+      <div style={{ fontFamily: 'Arial, sans-serif' }}>
+        <ToastContainer />
+        <div className="panel">
+          <header className="panel__header">
+            <div>
+              <a
+                className="btn"
+                rel=""
+                href="/newemailtemplate"
+                style={{
+                  textDecoration: 'none',
+                  color: '#fff',
+                  backgroundColor: '#007bff',
+                  padding: '8px 10px',
+                  borderRadius: '4px',
+                  width: '150px',
+                }}
+              >
+                <span className="btn__text">Create template</span>
+              </a>
+              <a
+                className="btn btn_border"
+                style={{
+                  textDecoration: 'none',
+                  color: '#007bff',
+                  padding: '8px 16px',
+                  borderRadius: '4px',
+                  border: '1px solid #007bff',
+                  marginRight: '900px',
+                }}
+              >
+                <span className="btn__text">Copy from library</span>
+              </a>
             </div>
-          ) : (
-            <div className="ReactTable">
-              <div className="rt-table" role="grid">
-                <div className="rt-thead -header">
-                  <div className="rt-tr">
-                    <th className="rt-th" style={{ width: "10%", textAlign: 'center', backgroundColor: '#f2f2f2', padding: '8px', borderBottom: '1px solid #ccc' }}>Name</th>
-                    <th className="rt-th" style={{ width: "76%", textAlign: 'center', backgroundColor: '#f2f2f2', padding: '8px', borderBottom: '1px solid #ccc' }}>Subject</th>
-                    <th className="rt-th" style={{ width: "30%", textAlign: 'center', backgroundColor: '#f2f2f2', padding: '8px', borderBottom: '1px solid #ccc' }}>Used in pipelines</th>
-                    <th></th>
+          </header>
+          <div className="panel__content">
+            {isLoading ? (
+              <div className="-loading" style={{ textAlign: 'center' }}>
+                <div className="-loading-inner">Loading...</div>
+              </div>
+            ) : (
+              <div>
+                <div >
+                  <div  style={{backgroundColor:'red'}}>
+                    <div>
+                      <th  style={{ width: '35%', textAlign: 'center', backgroundColor: '#f2f2f2', padding: '8px', borderBottom: '1px solid #ccc' }}>Name</th>
+                      <th  style={{ width: '35%', textAlign: 'center', backgroundColor: '#f2f2f2', padding: '8px', borderBottom: '1px solid #ccc' }}>Subject</th>
+                      <th  style={{ width: '35%', textAlign: 'center', backgroundColor: '#f2f2f2', padding: '8px', borderBottom: '1px solid #ccc' }}>Used in pipelines</th>
+                      <th></th>
+                    </div>
+                  </div>
+                  <div >
+                    {currentTemplates.map((template) => (
+                      <tr  key={template._id}>
+                        <td  style={{ width: '35%', textAlign: 'center', padding: '8px', borderBottom: '1px solid #ccc' }}>
+                          <td className="btn btn_link" onClick={(event) => { handleEdit(template._id, event) }} style={{ textDecoration: 'none', color: '#007bff' }}>{template.templatename}</td>
+                        </td>
+                        <td  style={{ width: '35%', textAlign: 'center', padding: '8px', borderBottom: '1px solid #ccc' }}>
+                          {template.emailsubject}
+                        </td>
+                        <td  style={{ width: '35%', textAlign: 'center', padding: '8px', borderBottom: '1px solid #ccc' }}>
+                          {template.usedInPipelines}
+                        </td>
+                        <td>
+                          <div  onClick={() => toggleMenu(template._id)} style={{ cursor: 'pointer', fontSize: '20px' }}>
+                            &#8942;
+                          </div>
+                          {openMenuId === template._id && (
+                            <div className="menu-options" >
+                              <div onClick={() => handleEdit(template._id)} style={{ color: 'blue', cursor: 'pointer' }}>Edit</div>
+                              <div onClick={() => handleDelete(template._id)} style={{ color: 'red', cursor: 'pointer' }}>Delete</div>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
                   </div>
                 </div>
-                <div className="rt-tbody">
-                  {emailTemplates.map(template => (
-                    <tr className="rt-tr" key={template._id}>
-                      <td className="rt-td" style={{ width: '10%', textAlign: 'center', padding: '8px', borderBottom: '1px solid #ccc' }}>
-                        <td className="btn btn_link" onClick={(event) => { handleEdit(template._id, event) }} style={{ textDecoration: 'none', color: '#007bff' }}>{template.templatename}</td>
-                      </td>
-                      <td className="rt-td" style={{ width: '70%', textAlign: 'center', padding: '8px', borderBottom: '1px solid #ccc' }}>
-                        {template.emailsubject}
-                      </td>
-                      <td className="rt-td" style={{ width: '30%', textAlign: 'center', padding: '8px', borderBottom: '1px solid #ccc' }}>
-                        {template.usedInPipelines}
-                      </td>
-                      <td>
-                        <div className="ci-menu-kebab" onClick={() => toggleMenu(template._id)} style={{ cursor: 'pointer', fontSize: '20px' }} >
-                          &#8942;
-                        </div>
-                        {openMenuId === template._id && (
-                          <div className="menu-options">
-                            <div onClick={() => handleEdit(template._id)} style={{ color: 'blue', cursor: 'pointer' }}>Edit</div>
-                            <div onClick={(txt) => handleDelete(template._id)} style={{ color: 'red', cursor: 'pointer' }}>Delete</div>
-                          </div>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
+          <div>
+  <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+    Previous
+  </button>
+  <span> Page {currentPage} of {totalPages} </span>
+  <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+    Next
+  </button>
+</div>
         </div>
       </div>
     </div>

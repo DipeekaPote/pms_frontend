@@ -89,6 +89,20 @@ const Tagcreate = () => {
     }
   };
 
+
+  const itemsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(tags.length / itemsPerPage);
+
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, tags.length);
+  const currentTemplates = tags.slice(startIndex, endIndex);
+  
+
+  
+
+
   return (
     <>
       <div className="input-with-color-dropdown-container">
@@ -128,7 +142,7 @@ const Tagcreate = () => {
             
           </thead>
           <tbody>
-            {tags.map((tag) => (
+            {currentTemplates.map((tag) => (
               <tr key={tag._id} > {/* Adjust row height here */}
                 <td style={{ textAlign: "center", padding: "0.5rem" }}>
                   <span
@@ -164,7 +178,15 @@ const Tagcreate = () => {
             ))}
           </tbody>
         </table>
-    
+        <div>
+  <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+    Previous
+  </button>
+  <span> Page {currentPage} of {totalPages} </span>
+  <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+    Next
+  </button>
+</div>
     </div >
     </>
   );

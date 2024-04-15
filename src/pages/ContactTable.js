@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from "react";
-import accounts from "./AccountDumy";
-import "./accountsdata.css";
-import { RiDeleteBin5Line } from 'react-icons/ri';
-import DropdownMenu from './FilterDropdown';
+import accounts from "./AccountDumy"; // Importing dummy data
+import "./accountsdata.css"; // Importing CSS file
+import { RiDeleteBin5Line } from 'react-icons/ri'; // Importing delete icon
+import DropdownMenu from './FilterDropdown'; // Importing dropdown menu component
 
 const AccountsData = () => {
+  // State variables
   const [contacts, setContacts] = useState([]);
   const [selectedContacts, setSelectedContacts] = useState([]);
   const [filter, setFilter] = useState('');
   const [selectAll, setSelectAll] = useState(false);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const columns = ['Client Type', 'Tags', 'Team', 'Pipeline and Stages', 'Invoices'];
+  // Fetching data from server on component mount
   useEffect(() => {
+    // Fetching contact data
     const requestOptions = {
       method: "GET",
       redirect: "follow",
@@ -19,47 +23,38 @@ const AccountsData = () => {
     fetch("http://127.0.0.1:8080/common/contact/contactlist/list/", requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        console.log(result.contactlist);
+        console.log(result);
         setContacts(result.contactlist);
       })
       .catch((error) => console.error(error));
   }, []);
 
-  const itemsPerPage = 10; // Number of items per page
-  const [currentPage, setCurrentPage] = useState(1);
-
-  // Calculate total number of pages
-  const totalPages = Math.ceil(contacts.length / itemsPerPage);
-
-  // Calculate index range for current page
+  // Constants for pagination
+  const itemsPerPage = 3;
+  const totalPages = contacts ? Math.ceil(contacts.length / itemsPerPage) : 0;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, contacts.length);
 
-  // Function to handle page change
+  // Functions for pagination
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  // Function to handle next page
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
   };
 
-  // Function to handle previous page
   const handlePreviousPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
   };
 
-
-  //delete template
+  // Function to delete a contact
   const handleDelete = (_id) => {
-
-    console.log(_id)
-
+    // Sending DELETE request
     const requestOptions = {
       method: "DELETE",
       redirect: "follow"
@@ -77,7 +72,6 @@ const AccountsData = () => {
       })
       .catch((error) => {
         console.error(error);
-
       })
       .finally(() => {
         setTimeout(() => {
@@ -86,32 +80,29 @@ const AccountsData = () => {
       });
   };
 
-  // Handler function to toggle selection of a contact
+  // Function to handle checkbox changes
   const handleRecordCheckboxChange = (id) => {
     setSelectedContacts((prevSelectedContacts) => {
       if (prevSelectedContacts.includes(id)) {
-        // If the ID is already in the selectedContacts array, remove it
         return prevSelectedContacts.filter((contactId) => contactId !== id);
       } else {
-        // Otherwise, add the ID to the selectedContacts array
         return [...prevSelectedContacts, id];
       }
     });
   };
 
+  // Function to handle master checkbox change
   const handleCheckboxChange = () => {
     setSelectAll(!selectAll);
     if (!selectAll) {
-      // If selectAll is false, set all accounts as selected
       const allcontactIds = contacts.map(contact => contact.id);
-      console.log(allcontactIds)
       setSelectedContacts(allcontactIds);
     } else {
-      // If selectAll is true, deselect all accounts
       setSelectedContacts([]);
     }
   };
 
+  // Filtering contacts based on search text
   const filteredContacts = contacts.filter(contact =>
     (contact.Name && contact.Name.toLowerCase().includes(filter.toLowerCase())) ||
     (contact.Email && contact.Email.toLowerCase().includes(filter.toLowerCase())) ||
@@ -120,19 +111,11 @@ const AccountsData = () => {
     (contact.Tags && contact.Tags.some(tagArray => tagArray.some(tag => tag.tagName && tag.tagName.toLowerCase().includes(filter.toLowerCase()))))
   );
 
-  console.log(selectedContacts)
-
-  
-  // Define your columns here
-  const columns = ['Client Type', 'Tags', 'Team', 'Pipeline and Stages', 'Invoices'];
-
-
+  // Rendering
   return (
-
     <div style={{ padding: "20px" }}>
-
-   <div style={{ marginLeft: "20px", width: "25%", height: "10px", padding: "15px 10px", borderRadius: "20px" }}>
-      <DropdownMenu columns={columns} />
+      <div style={{ marginLeft: "20px", width: "25%", height: "10px", padding: "15px 10px", borderRadius: "20px" }}>
+        <DropdownMenu columns={columns} />
       </div>
 
       <div style={{ position: "relative", textAlign: "right" }}>
@@ -147,11 +130,9 @@ const AccountsData = () => {
       </div>
 
       <table className="my-table col-12 ">
-
         <thead>
           <tr>
-            <th><input type="checkbox"   checked={selectAll}
-              onChange={handleCheckboxChange} /> </th> {/* Empty header for checkbox */}
+            <th><input type="checkbox"   checked={selectAll} onChange={handleCheckboxChange} /></th>
             <th>Name</th>
             <th>Email</th>
             <th>Phone Number</th>
@@ -161,13 +142,13 @@ const AccountsData = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredContacts.map((contact) => (
+          {filteredContacts.slice(startIndex, endIndex).map((contact) => (
             <tr key={contact.id}>
               <td>
                 <input type="checkbox"
                   checked={selectedContacts.includes(contact.id)}
                   onChange={() => handleRecordCheckboxChange(contact.id)} />
-              </td> {/* Checkbox column */}
+              </td>
               <td>{contact.Name}</td>
               <td>{contact.Email}</td>
               <td>
@@ -184,7 +165,7 @@ const AccountsData = () => {
                 {contact.Tags && contact.Tags.map(tagArray => (
                   <div key={tagArray[0]._id}>
                     {tagArray.map(tag => (
-                      <span key={tag._id} style={{fontSize:"12px", padding: "0.2rem 0.5rem", backgroundColor: tag.tagColour, color: "#fff", borderRadius: "50px", textAlign: "center", marginBottom: '5px', }}>
+                      <span key={tag._id} style={{ fontSize: "12px", padding: "0.2rem 0.5rem", backgroundColor: tag.tagColour, color: "#fff", borderRadius: "50px", textAlign: "center", marginBottom: '5px', }}>
                         {tag.tagName}
                       </span>
                     ))}
@@ -211,7 +192,6 @@ const AccountsData = () => {
         </button>
       </div>
     </div>
-
   );
 };
 

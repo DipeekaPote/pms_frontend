@@ -1,19 +1,19 @@
 import React, { useState, useRef, useEffect,useCallback  } from 'react';
-import "../../pages/Emailtemp/listdata.css"
-import Select from 'react-select';
 import { RiAddCircleLine } from 'react-icons/ri';
+import "../../pages/Emailtemp/email.css"
+import Select from 'react-select';
 
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { BsQuestionCircle } from 'react-icons/bs';
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { toast } from 'react-toastify';
-import { useParams } from "react-router-dom";
+import {useNavigate , useParams } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
 import makeAnimated from 'react-select/animated';
-const Shortcodes = () => {
+const UpdateEmail = () => {
 
     const { _id } = useParams();
-
+    const navigate = useNavigate();
 
     function showToast(message, type) {
         // Display toast based on the type (success, error, etc.)
@@ -283,7 +283,7 @@ const Shortcodes = () => {
             redirect: "follow"
         };
 
-        fetch("http://127.0.0.1:8080/workflow/emailtemplate/" + _id, requestOptions)
+        fetch("http://192.168.1.116:8080/workflow/emailtemplate/" + _id, requestOptions)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
@@ -292,8 +292,9 @@ const Shortcodes = () => {
             })
             .then((result) => {
                 // Show success message
-                showToast("Data sent successfully.", "success");
+                showToast("Data update successfully.", "success");
                 console.log(result);
+                navigate('/emailtemplate'); 
             })
             .catch((error) => {
                 // Show error message
@@ -400,7 +401,7 @@ const Shortcodes = () => {
                         {/* Template Name */}
                         <section className="form__section">
                             <div className="form__row">
-                                <div className="form__col form__col_100">
+                                <div className="form_col form_col_100">
                                     <label className="_input_1k08l_1">
                                         <span className="_inputLabel_1k08l_46">Template Name</span>
 
@@ -432,7 +433,7 @@ const Shortcodes = () => {
                                 >
                                     <BsQuestionCircle className={`v2-icon ${isHelpOpen ? 'active' : ''}`} color="#007bff" />
                                 </button>
-                                {/* Render your help content conditionally based on `isHelpOpen` state */}
+                                {/* Render your help content conditionally based on isHelpOpen state */}
                                 {isHelpOpen && (
                                     <div className="help-content">
                                         {/* Your help content goes here */}
@@ -440,7 +441,7 @@ const Shortcodes = () => {
                                 )}
                             </h2>
                             <div className="form__row">
-                                <div className="form__col form__col_100 m-t-10">
+                                <div className="form_col form_col_100 m-t-10">
                                     <label className="radio" data-test="import-shared-radio-component">
                                         <div className="radio__header">
                                             <input
@@ -462,7 +463,7 @@ const Shortcodes = () => {
                                 </div>
                             </div>
                             <div className="form__row">
-                                <div className="form__col form__col_100 m-t-15">
+                                <div className="form_col form_col_100 m-t-15">
                                     <label className="radio" data-test="import-shared-radio-component">
                                         <div className="radio__header">
                                             <input
@@ -488,7 +489,7 @@ const Shortcodes = () => {
 
 
                         <div className="form__row">
-                            <div className="form__col form__col_100">
+                            <div className="form_col form_col_100">
                                 <div className="_select_5n3c2_115">
                                     <label className="_selectLabel_5n3c2_221">From</label>
                                     <div className="react-select-container css-b62m3t-container">
@@ -521,7 +522,7 @@ const Shortcodes = () => {
 
                         <section className="form__section">
                             <div className="form__row">
-                                <div className="form__col form__col_100">
+                                <div className="form_col form_col_100">
                                     <label className="_input_1k08l_1">
                                         <span className="_inputLabel_1k08l_46">Email Subject</span>
                                         <div className="_field_1k08l_14" data-test="input-wrapper">
@@ -598,7 +599,7 @@ const Shortcodes = () => {
                             {mode === 'wysiwyg' && (
                                 <section className="form__section">
                                     <div className="form__row">
-                                        <div className="form__col form__col_100">
+                                        <div className="form_col form_col_100">
                                             {/* Apply custom CSS to remove the border */}
 
 
@@ -650,7 +651,7 @@ const Shortcodes = () => {
                             {mode === 'html' && (
                                 <section className="form__section">
                                     <div className="form__row">
-                                        <div className="form__col form__col_100">
+                                        <div className="form_col form_col_100">
                                             <textarea
                                                 className="wysiwyg"
                                                 value={textareaValue + selectedShortcuthtml}
@@ -704,7 +705,7 @@ const Shortcodes = () => {
             </div>
 
             <div className="form__row m-t-30 d-flex">
-                <div className="form__col form__col_50 d-flex">
+                <div className="form_col form_col_50 d-flex">
                     <button type="submit" onClick={SendData} className="btn btn-success btn-block mr-1">
                         Save & Exit
                     </button>
@@ -720,4 +721,4 @@ const Shortcodes = () => {
     );
 };
 
-export default Shortcodes;
+export default UpdateEmail;

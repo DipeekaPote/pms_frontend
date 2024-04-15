@@ -284,7 +284,16 @@ const tempallvalue=()=>{
   setTempNameNew(tempvalues)
     }
 
+    const itemsPerPage = 2;
+const [currentPage, setCurrentPage] = useState(1);
+
+    const totalPages = Math.ceil(folderTemplates.length / itemsPerPage);
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, folderTemplates.length);
+    const currentTemplates = folderTemplates.slice(startIndex, endIndex);
     
+
   return (
     <div className="container">
       <h1>Folder Template</h1>
@@ -296,7 +305,7 @@ const tempallvalue=()=>{
               <th>Name</th>
               <th></th>
               <tbody>
-                {folderTemplates.map(template => (
+                {currentTemplates.map(template => (
                   <tr key={template._id}>
                     <td onClick={() => handleEdit(template._id)} style={{cursor:"pointer",color:'blue'}} >{template.templatename}</td>
 
@@ -317,6 +326,16 @@ const tempallvalue=()=>{
                 ))}
               </tbody>
             </table>
+            <div>
+  <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+    Previous
+  </button>
+  <span> Page {currentPage} of {totalPages} </span>
+  <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+    Next
+  </button>
+</div>
+
           </div>
         }
       </div>

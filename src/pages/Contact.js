@@ -238,6 +238,7 @@ const options = tags.map((tag) => ({
     .then((result) => {
       // Handle success
       toast.success("Contact created successfully");
+      window.location.reload();
       // Additional logic after successful creation if needed
     })
     .catch((error) => {

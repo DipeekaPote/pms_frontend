@@ -237,10 +237,26 @@ const handleDelete = (_id) => {
       console.error(error);
       toast.error("Failed to create Job Template");
     })
-      // .then((response) => response.text())
-      // .then((result) => console.log(result))
-      // .catch((error) => console.error(error));
+   
   }
+
+
+
+
+  const itemsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(1);
+  
+
+  const totalPages = Math.ceil(JobTemplates.length / itemsPerPage);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, JobTemplates.length);
+  const currentTemplates = JobTemplates.slice(startIndex, endIndex);
+  
+
+
+
+
 
 
   return (
@@ -258,7 +274,7 @@ const handleDelete = (_id) => {
              </tr>
            </thead>
            <tbody>
-             {JobTemplates.map(template => (
+             {currentTemplates.map(template => (
                <tr key={template._id}>
                  <td onClick={() => handleEdit(template._id)} style={{ cursor: "pointer", color: 'blue' }}>{template.templatename}</td>
                  <td>
@@ -276,6 +292,15 @@ const handleDelete = (_id) => {
              ))}
            </tbody>
          </table>
+         <div>
+  <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+    Previous
+  </button>
+  <span> Page {currentPage} of {totalPages} </span>
+  <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+    Next
+  </button>
+</div>
        </div>
                }
       </div>
