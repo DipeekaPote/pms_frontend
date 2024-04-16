@@ -173,8 +173,7 @@ console.log(combinedValues);
   const [tempName, setTempName] = useState('');
 
   const handleCancel = () => {
-    setShowForm(false);
-    setTempName('');
+navigate("/job_template")
   };
 
   console.log(combinedValues)
@@ -396,7 +395,7 @@ console.log(combinedValues);
           <div className='bottom-buttons-group col-6' style={{ display: 'flex', gap: '10px', marginLeft: '10px', marginBottom: '20px' }}>
 
             <button type='submit' style={{ padding: '10px', borderRadius: '10px', cursor: 'pointer', background: 'blue', color: '#fff', border: 'none', fontSize: '15px' }} className='col-2' onClick={updatejobtemp} >Save & exit</button>
-            <button type='reset' style={{ padding: '10px', borderRadius: '10px', cursor: 'pointer', background: '#fff', color: 'blue', border: '1px solid blue', fontSize: '15px' }} className='col-2'>Save</button>
+
             <button type='reset' style={{ padding: '10px', borderRadius: '10px', cursor: 'pointer', background: '#fff', color: 'blue', border: '1px solid blue', fontSize: '15px' }} onClick={handleCancel} className='col-2'>Cancle</button>
           </div>
         </div>

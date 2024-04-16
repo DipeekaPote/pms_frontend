@@ -33,6 +33,10 @@ const UpdateEmail = () => {
 
 
 
+    const handleClose=()=>{
+        navigate("/emailtemplate")
+  
+      }
 
     const toggleHelp = () => {
         setIsHelpOpen(!isHelpOpen);
@@ -709,10 +713,8 @@ const UpdateEmail = () => {
                     <button type="submit" onClick={SendData} className="btn btn-success btn-block mr-1">
                         Save & Exit
                     </button>
-                    <button onClick={SendData} className="btn btn-primary btn-block mr-1">
-                        Save
-                    </button>
-                    <button type="button" className="btn btn-secondary btn-block">
+                   
+                    <button type="button" onClick={handleClose} className="btn btn-secondary btn-block">
                         Cancel
                     </button>
                 </div>

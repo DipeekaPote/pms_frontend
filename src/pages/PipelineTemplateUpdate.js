@@ -82,7 +82,10 @@ const CreatePipeline = () => {
     const handleAssigneesChange = (checked) => {
         setAssignees(checked);
     };
-
+    const handleClose = () => {
+        navigate("/createpipeline")
+    };
+    
     const handleAddStage = () => {
         // Duplicate the last stage and add it to the stages array
         const lastStage = stages[stages.length - 1];
@@ -694,7 +697,7 @@ const CreatePipeline = () => {
                             </div>
                         </div>
                         <button onClick={createPipe}>Save</button>
-                        <button>cancel</button>
+                        <button onClick={handleClose}>cancel</button>
                     </div>
                 </div>
 

@@ -242,6 +242,7 @@ const CreatePipeline = () => {
 
 
     const [showForm, setShowForm] = useState(false);
+    const [tempName, setTempName] = useState('');
     //get all templateName Record 
     const [pipelineData, setPipelineData] = useState([]);
 
@@ -265,7 +266,10 @@ const CreatePipeline = () => {
 
     console.log(pipelineData)
 
-
+  const handleCancel = () => {
+    setShowForm(false);
+    setTempName('');
+  };
 
     const handleCreateTemplate = () => {
         setShowForm(true);
@@ -738,7 +742,7 @@ const CreatePipeline = () => {
 
                             </div>
                             <button onClick={createPipe}>Save</button>
-                            <button>cancel</button>
+                            <button onClick={handleCancel}>cancel</button>
                         </div>
                     </div>
                 )}
